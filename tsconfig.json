@@ -1,0 +1,12 @@
+{
+  "files": [],
+  "references": [
+    { "path": "apps/web" },
+    { "path": "apps/api" },
+    { "path": "packages/analysis-engine" },
+    { "path": "packages/graph-engine" },
+    { "path": "packages/search-engine" },
+    { "path": "packages/ai-engine" },
+    { "path": "packages/shared" }
+  ]
+}
