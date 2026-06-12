@@ -216,6 +216,75 @@ Verification Results:
 - Prettier format check: PASSED (all files formatted)
 - TypeScript build: PASSED (16 output files generated)
 
+---
+ 
+## EPIC-003 Enhancement: API Route Versioning
+
+Date: 2026-06-12
+
+Completed Tasks:
+- Extracted inline routes into organized route modules
+- Standardized all routes under /api/v1 prefix per API_SPEC.md
+- Fixed TypeScript declaration emit issue with Router type annotations
+
+Files Created:
+- apps/api/src/routes/health.ts (health/ready route module)
+- apps/api/src/routes/index.ts (route aggregator, mounted at /api/v1)
+
+Files Modified:
+- apps/api/src/app.ts (replaced inline routes with mounted apiRouter at /api/v1)
+
+Architectural Decisions:
+- Route modules use Express Router pattern for clean separation
+- All API routes mounted under /api/v1 to match API_SPEC.md versioning strategy
+- Vite proxy left unchanged — /api prefix proxied as-is without rewrite, so /api/v1/* requests reach the correct Express handler
+- Health/ready endpoints included under versioned path (they are API endpoints, not infrastructure probes)
+- Route aggregator pattern (routes/index.ts) establishes the pattern for future route modules (repositories, analysis, chat, etc.)
+
+Verification Results:
+- TypeScript type check: PASSED (root + api)
+- ESLint: PASSED (no errors)
+- Prettier format check: PASSED (all files formatted)
+
+---
+ 
+## EPIC-001 Enhancement: Workspace Package Build Fix
+
+Date: 2026-06-12
+
+Completed Tasks:
+- Identified 4 packages with empty src/ directories blocking tsc --build (TS18003)
+- Created minimal src/index.ts with empty module export for each
+- Added missing package.json fields: type, main, types, exports, build/typecheck scripts, typescript devDep
+- Ensured all workspace packages build successfully under tsc --build
+
+Files Created:
+- packages/analysis-engine/src/index.ts (empty module export — no business logic)
+- packages/graph-engine/src/index.ts (empty module export — no business logic)
+- packages/search-engine/src/index.ts (empty module export — no business logic)
+- packages/ai-engine/src/index.ts (empty module export — no business logic)
+
+Files Modified:
+- packages/analysis-engine/package.json (added ESM fields, exports, build scripts)
+- packages/graph-engine/package.json (added ESM fields, exports, build scripts)
+- packages/search-engine/package.json (added ESM fields, exports, build scripts)
+- packages/ai-engine/package.json (added ESM fields, exports, build scripts)
+
+Architectural Decisions:
+- Each engine package follows the same module convention as @archaeologist/shared (type:module, exports, build scripts)
+- Minimal export {} ensures TypeScript module semantics without introducing placeholder business logic
+- Packages remain independent (no cross-package references) until actual implementation requires them
+- typescript devDep added for build isolation, matching shared package convention
+
+Known Risks:
+- packages are still empty shells — imports from workspace consumers will fail until real exports are added
+
+Verification Results:
+- tsc --build: PASSED (all 6 workspace projects build, all produce dist/)
+- TypeScript type check (root): PASSED
+- ESLint: PASSED (no errors)
+- Prettier format check: PASSED (all files formatted)
+
 Next Recommended Tasks:
 - EPIC-004: MongoDB (TASK-023 through TASK-027) — database connection and repository schemas
-- TASK-019: Implement health endpoint (endpoints already exist as part of app.ts, needs DB connectivity checks added)
+- TASK-019: Implement health endpoint (DB connectivity checks in /api/v1/ready)

@@ -1,2 +1,14 @@
-node_modules/
-opencode.json
+node_modules
+dist
+build
+coverage
+.next
+.env
+.env.local
+.env.production
+
+*.log
+
+.turbo
+
+.pnpm-store
