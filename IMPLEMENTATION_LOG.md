@@ -336,5 +336,63 @@ Verification Results:
 - ESLint: PASSED (no errors)
 - Prettier format check: PASSED (all files formatted)
 
+---
+ 
+## EPIC-004: MongoDB Foundation
+
+Date: 2026-06-12
+
+Completed Tasks:
+- TASK-023: Setup MongoDB connection (MongoDatabase concrete class — mongoose.connect/disconnect with event handling)
+- TASK-024: Create Repository schema (Mongoose schema + model with name/status/source/timestamps)
+- TASK-025: Create Analysis schema (Mongoose schema + model with repositoryId reference/status/report/timestamps)
+- TASK-026: Create Conversation schema (Mongoose schema + model with repositoryId reference/messages subdocs/timestamps)
+- TASK-027: Implement repository repository-layer (MongoRepository<T> generic base + 3 concrete repos: RepositoryRepository, AnalysisRepository, ConversationRepository)
+
+Files Created:
+- apps/api/src/infrastructure/database/MongoDatabase.ts (Database implementation with Mongoose)
+- apps/api/src/infrastructure/database/schemas/interfaces.ts (IRepository, IAnalysis, IConversation, IMessage interfaces)
+- apps/api/src/infrastructure/database/schemas/Repository.ts (Mongoose schema + RepositoryModel)
+- apps/api/src/infrastructure/database/schemas/Analysis.ts (Mongoose schema + AnalysisModel)
+- apps/api/src/infrastructure/database/schemas/Conversation.ts (Mongoose schema + ConversationModel)
+- apps/api/src/infrastructure/database/schemas/index.ts (barrel export for schemas)
+- apps/api/src/infrastructure/database/repositories/MongoRepository.ts (generic abstract Mongoose repository — findById, findAll, create, update, delete with _id → id mapping)
+- apps/api/src/infrastructure/database/repositories/RepositoryRepository.ts (Repository CRUD + findByStatus, findByName)
+- apps/api/src/infrastructure/database/repositories/AnalysisRepository.ts (Analysis CRUD + findByRepositoryId, findLatestByRepositoryId)
+- apps/api/src/infrastructure/database/repositories/ConversationRepository.ts (Conversation CRUD + findByRepositoryId, addMessage)
+- apps/api/src/infrastructure/database/repositories/index.ts (barrel export for repositories)
+- DATABASE_SCHEMA.md (complete persistence documentation)
+
+Files Modified:
+- apps/api/src/infrastructure/index.ts (added exports for all new modules)
+- apps/api/package.json (added mongoose ^8.24.0 dependency)
+
+Dependencies Added:
+- mongoose ^8.24.0 (production, apps/api)
+
+Architectural Decisions:
+- Mongoose chosen as MongoDB ODM for schema validation, TypeScript generics, and rich query API
+- Entity interfaces (IRepository, IAnalysis, IConversation) defined as plain TypeScript types WITHOUT Mongoose Document extension — avoids type conflicts with Document.id
+- Schema files use untyped Schema constructors for field definitions (allows Schema.Types.ObjectId for ref fields) with typed model() calls for clean consumer API
+- MongoRepository<T> extends Repository<T> with protected abstract getModel(): Model<T> accessor — concrete repos return their specific Mongoose Model, keeping the generic base independent of concrete schemas
+- _id → id mapping done via toEntity() helper in MongoRepository base — strips Mongoose internals (_id, __v) and adds string id
+- Concrete repos add domain-specific query methods (findByStatus, findLatestByRepositoryId, addMessage) beyond the basic CRUD
+- timestamps: true enabled on all schemas for automatic createdAt/updatedAt
+- Message subdocument uses { _id: false } to prevent unnecessary ObjectId generation per message
+- DATABASE_SCHEMA.md created per AGENTS.md Forbidden 10 requirement
+
+Known Risks:
+- Model<T> type parameter on getModel() returns Mongoose Model type — concrete repos must match T to their schema's model type
+- No test infrastructure for integration testing MongoDB operations (EPIC-022 is far in future)
+- Repository entities returned from MongoRepository include `id: string` at runtime but T in Repository<T> does not include id — consumers must use entity['id' as keyof T] or runtime access
+- Connection lifecycle in MongoDatabase depends on environment config — startup will fail without valid MONGODB_URI in .env
+
+Verification Results:
+- TypeScript type check (root): PASSED
+- TypeScript type check (api): PASSED
+- ESLint: PASSED (no errors)
+- Prettier format check: PASSED (all files formatted)
+
 Next Recommended Tasks:
-- EPIC-004: MongoDB (TASK-023 through TASK-027) — concrete Database and Repository implementations
+- EPIC-005: Neo4j Graph Database (TASK-028 through TASK-031)
+- EPIC-006: Repository Upload (TASK-032 through TASK-036)

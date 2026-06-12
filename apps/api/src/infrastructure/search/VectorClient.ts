@@ -1,9 +1,5 @@
 export abstract class VectorClient {
-  abstract search(
-    collection: string,
-    vector: number[],
-    limit?: number,
-  ): Promise<unknown[]>;
+  abstract search(collection: string, vector: number[], limit?: number): Promise<unknown[]>;
   abstract upsert(
     collection: string,
     id: string,
