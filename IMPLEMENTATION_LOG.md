@@ -285,6 +285,56 @@ Verification Results:
 - ESLint: PASSED (no errors)
 - Prettier format check: PASSED (all files formatted)
 
+---
+ 
+## EPIC-003 Enhancement: Infrastructure Layer
+
+Date: 2026-06-12
+
+Completed Tasks:
+- Established clean architecture infrastructure boundaries in apps/api
+- Created abstract connection lifecycle manager
+- Created generic repository pattern
+- Created abstract graph, vector search, and AI client boundaries
+- No business logic implemented — pure abstract contracts only
+
+Files Created:
+- apps/api/src/infrastructure/index.ts (barrel export for all infrastructure boundaries)
+- apps/api/src/infrastructure/database/Database.ts (abstract connection lifecycle: connect, disconnect, isConnected)
+- apps/api/src/infrastructure/database/repositories/Repository.ts (generic abstract CRUD: findById, findAll, create, update, delete)
+- apps/api/src/infrastructure/graph/GraphClient.ts (abstract Neo4j client: query, execute)
+- apps/api/src/infrastructure/search/VectorClient.ts (abstract Qdrant client: search, upsert, deleteCollection)
+- apps/api/src/infrastructure/ai/AiClient.ts (abstract LLM client: chat, embed)
+
+Architectural Decisions:
+- All infrastructure boundaries use abstract classes rather than interfaces — this allows the application layer to depend on abstractions (Dependency Inversion Principle) while leaving room for cross-cutting concerns (logging, metrics) via base class extension
+- Repository pattern uses generic `<T>` for type-safe CRUD without coupling to specific entity types
+- GraphClient exposes query/execute split — query for read operations returning data, execute for write operations with no return
+- VectorClient includes deleteCollection for repository cleanup during cascading deletes (per DATABASE_SCHEMA.md retention policy)
+- AiClient keeps a simple chat/embed interface — no streaming, tool use, or multi-turn state management (application layer handles that)
+- Infrastructure does NOT import from domain packages — boundaries are self-contained abstract definitions
+- Folder structure mirrors the polyglot persistence architecture: database/ (MongoDB), graph/ (Neo4j), search/ (Qdrant), ai/ (OpenAI)
+
+Dependency Boundaries:
+```text
+Application Layer (routes, services)
+    │ depends on abstractions
+    ▼
+Infrastructure Layer (abstract classes)  ← YOU ARE HERE
+    │ implemented by
+    ▼
+Concrete Adapters (MongoDatabase, Neo4jClient, etc.)
+    │ NOT YET IMPLEMENTED
+```
+
+Known Risks:
+- None — infrastructure layer contains only abstract contracts with zero implementation
+
+Verification Results:
+- TypeScript type check (root): PASSED
+- tsc --build: PASSED (all 7 workspace projects build)
+- ESLint: PASSED (no errors)
+- Prettier format check: PASSED (all files formatted)
+
 Next Recommended Tasks:
-- EPIC-004: MongoDB (TASK-023 through TASK-027) — database connection and repository schemas
-- TASK-019: Implement health endpoint (DB connectivity checks in /api/v1/ready)
+- EPIC-004: MongoDB (TASK-023 through TASK-027) — concrete Database and Repository implementations
