@@ -393,6 +393,57 @@ Verification Results:
 - ESLint: PASSED (no errors)
 - Prettier format check: PASSED (all files formatted)
 
+---
+
+## EPIC-005: Graph Database (Neo4j)
+
+Date: 2026-06-12
+
+Completed Tasks:
+- TASK-028: Setup Neo4j connection (Neo4jClient — concrete GraphClient with neo4j-driver, connection verification via getServerInfo)
+- TASK-029: Create graph service (NodeService — createNode, getNode, updateNode, deleteNode, findNodesByLabel, createConstraint, createIndex)
+- TASK-030: Create relationship service (RelationshipService — createRelationship, getNodeRelationships, deleteRelationship)
+- TASK-031: Implement graph query service (QueryService — findNodeById, findNeighbors, searchNodes, findPath)
+
+Files Created:
+- apps/api/src/infrastructure/graph/Neo4jClient.ts (GraphClient implementation — connect/disconnect lifecycle, query/execute with session management, Integer-to-number conversion, parameterized Cypher)
+- apps/api/src/infrastructure/graph/services/NodeService.ts (node CRUD with label-based Cypher, constraint/index management)
+- apps/api/src/infrastructure/graph/services/RelationshipService.ts (relationship CRUD with directional query support)
+- apps/api/src/infrastructure/graph/services/QueryService.ts (ID lookup, neighbor traversal, text search, shortest path)
+- apps/api/src/infrastructure/graph/services/index.ts (barrel export)
+
+Files Modified:
+- apps/api/src/infrastructure/index.ts (added exports for Neo4jClient and all 3 service classes/types)
+- apps/api/package.json (added neo4j-driver ^5.28.3 dependency)
+
+Dependencies Added:
+- neo4j-driver ^5.28.3 (production, apps/api)
+
+Architectural Decisions:
+- Neo4jClient extends GraphClient abstract class, maintaining the dependency inversion pattern established in EPIC-003
+- Session-per-operation pattern with try/finally ensures no session leakage
+- Integer-to-number conversion centralized in Neo4jClient via recursive convertIntegers helper — all downstream services receive plain JS objects
+- getServerInfo() called during connect() to verify live connection (not just driver instantiation)
+- Services use constructor injection of Neo4jClient (not inheritance) for clean separation of concerns
+- Cypher queries use parameterized patterns ($params) — no string interpolation for user data, preventing Cypher injection
+- Label names use template literals with backtick escaping (Cypher convention) for dynamic labels
+- NodeService includes createConstraint/createIndex for graph schema initialization (matching DATABASE_SCHEMA.md requirements)
+- Each service returns typed domain objects (GraphNode, GraphRelationship, Subgraph, GraphPath) rather than raw records
+- Shortest path via Neo4j's built-in shortestPath() function — efficient graph traversal
+
+Known Risks:
+- Cypher label/type names are interpolated via template literals — safe because values are internal constants, not user input; labels must match known GraphNode types exactly
+- 3 service classes depend on Neo4jClient; integration tests require a running Neo4j instance
+- Neo4j Integer objects from driver results are converted to JS numbers — very large integers (>53 bits) lose precision (unlikely for our use case of line numbers, file sizes)
+- QueryService.findPath uses shortestPath() which may time out on large graphs without depth limits (maxDepth defaults to 10, settable by caller)
+- searchNodes uses CONTAINS (case-sensitive) — future improvement could use case-insensitive regex or fulltext indexes
+
+Verification Results:
+- TypeScript type check (root): PASSED
+- TypeScript type check (api): PASSED
+- ESLint: PASSED (no errors)
+- Prettier format check: PASSED (all files formatted)
+
 Next Recommended Tasks:
-- EPIC-005: Neo4j Graph Database (TASK-028 through TASK-031)
 - EPIC-006: Repository Upload (TASK-032 through TASK-036)
+- EPIC-007: GitHub Import (TASK-037 through TASK-040)

@@ -54,15 +54,14 @@ You must follow these principles:
 
 EPIC:
 
-EPIC-003: API Service
+EPIC-005: Graph Database
 
 Tasks:
 
-TASK - 017
-TASK - 018
-TASK - 020
-TASK - 021
-TASK - 022
+TASK - 028
+TASK - 029
+TASK - 030
+TASK - 031
 ---
 
 # EXECUTION PROCESS
