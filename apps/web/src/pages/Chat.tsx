@@ -26,9 +26,7 @@ export default function Chat() {
         <div className="flex items-center justify-center">
           <div className="rounded-lg border border-gray-800 bg-gray-900 p-8 text-center">
             <h3 className="text-lg font-semibold text-gray-200">Ask about this repository</h3>
-            <p className="mt-2 text-sm text-gray-400">
-              Try one of these questions to get started:
-            </p>
+            <p className="mt-2 text-sm text-gray-400">Try one of these questions to get started:</p>
             <div className="mt-4 flex flex-wrap justify-center gap-2">
               {suggestions.map((q) => (
                 <button

@@ -2,12 +2,10 @@
 
 # AI Codebase Archaeologist
 
-Version: 1.0
+Version: 1.1
 
 Purpose:
-Provide operating instructions, architectural constraints, coding standards, and decision-making guidelines for AI coding agents working on this repository.
-
-This file is the authoritative instruction set for all AI agents.
+This document defines the operational rules, architectural constraints, implementation standards, and decision framework for all AI coding agents working on this repository.
 
 Examples:
 
@@ -16,27 +14,39 @@ Examples:
 * Cursor
 * Codex
 * Gemini CLI
-* Aider
-* Cline
 * Roo Code
+* Cline
+* Aider
+
+This document is the primary instruction file for all AI agents.
 
 ---
 
-# Project Mission
+# Mission
 
-AI Codebase Archaeologist transforms source code repositories into searchable knowledge systems.
+AI Codebase Archaeologist transforms source code repositories into searchable repository intelligence.
 
-The platform analyzes repositories using AST parsing, extracts entities and relationships, constructs a knowledge graph, generates repository intelligence, and enables natural-language exploration.
+The platform:
 
-The Knowledge Graph is the product.
+* Ingests repositories
+* Parses source code
+* Extracts entities
+* Extracts relationships
+* Builds a knowledge graph
+* Generates embeddings
+* Reconstructs flows
+* Produces architectural reports
+* Enables repository-grounded chat
 
-The LLM is an interface.
+The Knowledge Graph is the primary product asset.
+
+The LLM is an interface layer.
 
 ---
 
 # Documentation Hierarchy
 
-When multiple documents exist, follow them in this order.
+When documentation conflicts, follow the highest priority document.
 
 Priority 1
 
@@ -56,21 +66,45 @@ Defines architecture.
 
 Priority 3
 
-GRAPH_SCHEMA.md
+ANALYSIS_PIPELINE.md
 
-Defines repository intelligence model.
+Defines repository analysis behavior.
 
 ---
 
 Priority 4
 
-DATABASE_SCHEMA.md
+RAG_ARCHITECTURE.md
 
-Defines persistence strategy.
+Defines retrieval and AI behavior.
 
 ---
 
 Priority 5
+
+API_SPEC.md
+
+Defines API contracts.
+
+---
+
+Priority 6
+
+GRAPH_SCHEMA.md
+
+Defines graph structure.
+
+---
+
+Priority 7
+
+DATABASE_SCHEMA.md
+
+Defines persistence model.
+
+---
+
+Priority 8
 
 DOMAIN_MODEL.md
 
@@ -78,17 +112,59 @@ Defines business entities.
 
 ---
 
-Priority 6
+Priority 9
 
 TASKS.md
 
-Defines implementation order.
+Defines implementation sequence.
 
 ---
 
-If two documents conflict:
+If conflicts exist:
 
 Always follow the higher-priority document.
+
+---
+
+# Mandatory Reading
+
+Before implementing any task, agents must read:
+
+```text id="d7c8hf"
+AGENTS.md
+
+PRD.md
+
+SYSTEM_DESIGN.md
+
+ANALYSIS_PIPELINE.md
+
+RAG_ARCHITECTURE.md
+
+API_SPEC.md
+
+GRAPH_SCHEMA.md
+
+DATABASE_SCHEMA.md
+
+TASKS.md
+```
+
+---
+
+# Product Identity
+
+The product is:
+
+```text id="b8b0o8"
+Repository Intelligence Platform
+```
+
+The product is NOT:
+
+```text id="f5sazw"
+Generic AI Chatbot
+```
 
 ---
 
@@ -100,19 +176,19 @@ Always follow the higher-priority document.
 
 Graph First
 
-Repository intelligence must come from graph relationships.
+Repository understanding originates from graph relationships.
 
-Never use vector retrieval as the primary source of truth.
+Graph retrieval always takes precedence over vector retrieval.
 
 ---
 
 ## Principle 2
 
-AST Before AI
+AST Before Intelligence
 
-All repository understanding must originate from AST analysis.
+Repository intelligence must originate from AST analysis.
 
-Never ask an LLM to infer relationships directly from raw code.
+Never infer repository relationships using an LLM.
 
 ---
 
@@ -120,21 +196,33 @@ Never ask an LLM to infer relationships directly from raw code.
 
 Deterministic Analysis
 
-Analysis results must be repeatable.
+Analysis must be repeatable.
 
-Identical repositories should produce identical graph structures.
+Identical repositories should generate identical outputs.
 
 ---
 
 ## Principle 4
 
-Separation of Concerns
+Polyglot Persistence
 
-MongoDB stores application state.
+MongoDB
 
-Neo4j stores repository intelligence.
+Application State
 
-Qdrant stores embeddings.
+---
+
+Neo4j
+
+Repository Intelligence
+
+---
+
+Qdrant
+
+Semantic Retrieval
+
+---
 
 Do not mix responsibilities.
 
@@ -142,105 +230,116 @@ Do not mix responsibilities.
 
 ## Principle 5
 
-Pipeline Driven Architecture
+Evidence-Based AI
 
-Repository analysis is a pipeline.
-
-Each stage consumes outputs from previous stages.
+Repository answers require repository evidence.
 
 ---
 
-# Absolute Rules
+# Absolute Prohibitions
 
-The following rules must never be violated.
-
----
-
-Rule 1
-
-Never use regex to discover function relationships.
-
-AST analysis is mandatory.
+The following actions are forbidden.
 
 ---
 
-Rule 2
+## Forbidden 1
 
-Never build graph relationships from LLM output.
+Using regex to build repository relationships.
 
-Relationships must originate from AST analysis.
-
----
-
-Rule 3
-
-Never create graph edges before graph nodes.
-
-Build order:
-
-1. Nodes
-2. Structural edges
-3. Semantic edges
+Relationships must originate from AST traversal.
 
 ---
 
-Rule 4
+## Forbidden 2
 
-Never embed entire repositories.
+Using LLM output as graph truth.
 
----
-
-Rule 5
-
-Never embed entire source files.
+Graph truth must originate from code analysis.
 
 ---
 
-Rule 6
+## Forbidden 3
 
-Never treat semantic retrieval as repository truth.
+Creating graph edges before graph nodes.
 
-Semantic retrieval is supplementary.
+Mandatory order:
 
----
-
-Rule 7
-
-Never bypass the analysis pipeline.
-
----
-
-Rule 8
-
-Never hardcode repository-specific assumptions.
-
----
-
-Rule 9
-
-Never modify graph schema without updating:
-
-GRAPH_SCHEMA.md
-
----
-
-Rule 10
-
-Never modify persistence models without updating:
-
-DATABASE_SCHEMA.md
-
----
-
-# Repository Analysis Rules
-
-Analysis Pipeline:
-
-Repository
+```text id="c9bhd6"
+Nodes
 
 ↓
 
-Scan
+Structural Relationships
+
+↓
+
+Semantic Relationships
+```
+
+---
+
+## Forbidden 4
+
+Embedding entire repositories.
+
+---
+
+## Forbidden 5
+
+Embedding entire source files.
+
+---
+
+## Forbidden 6
+
+Treating vector search as repository truth.
+
+---
+
+## Forbidden 7
+
+Skipping graph retrieval for repository questions.
+
+---
+
+## Forbidden 8
+
+Inventing execution flows.
+
+Flows must originate from graph traversal.
+
+---
+
+## Forbidden 9
+
+Changing graph schema without updating:
+
+```text id="6ot0kx"
+GRAPH_SCHEMA.md
+```
+
+---
+
+## Forbidden 10
+
+Changing persistence models without updating:
+
+```text id="1xw9e4"
+DATABASE_SCHEMA.md
+```
+
+---
+
+# Analysis Pipeline Rules
+
+The analysis pipeline must follow:
+
+```text id="4gx77r"
+Repository Ingestion
+
+↓
+
+Repository Scan
 
 ↓
 
@@ -268,84 +367,53 @@ Embedding Generation
 
 ↓
 
+Flow Reconstruction
+
+↓
+
 Report Generation
+```
 
-Agents must preserve this sequence.
+Do not reorder stages.
 
----
+Reference:
 
-# Supported Languages
-
-Current MVP
-
-* JavaScript
-* TypeScript
-
-Do not add additional language support.
-
-Future languages belong in roadmap only.
+```text id="twm5f6"
+ANALYSIS_PIPELINE.md
+```
 
 ---
 
-# Technology Detection Rules
+# Graph Rules
 
-Detection sources:
+Graph implementation must follow:
 
-* package.json
-* tsconfig.json
-* Dockerfile
-* docker-compose.yml
-* GitHub Actions
-
-Avoid heuristic guessing when deterministic detection is possible.
+```text id="v5gkl8"
+GRAPH_SCHEMA.md
+```
 
 ---
 
-# AST Parsing Rules
+Allowed Node Types:
 
-Preferred order:
-
-1. TypeScript Compiler API
-2. Babel Parser
-
-AST parsing must:
-
-* Survive malformed files
-* Continue on errors
-* Report parsing failures
-
-Never stop repository analysis because of one bad file.
-
----
-
-# Entity Extraction Rules
-
-Allowed entity types:
-
+* Repository
+* Folder
+* File
 * Function
 * Class
 * Interface
 * Type
 * Enum
-* Route
-* Model
-* Middleware
 * Service
+* Middleware
 * Component
 * Hook
-
-Do not invent entity categories.
-
-New categories require:
-
-1. Schema update
-2. Documentation update
+* Route
+* Model
 
 ---
 
-# Relationship Extraction Rules
-
-Allowed relationships:
+Allowed Relationships:
 
 * CONTAINS
 * IMPORTS
@@ -357,186 +425,122 @@ Allowed relationships:
 * DEPENDS_ON
 * IMPLEMENTS
 * EXTENDS
-* EXPOSES
 * RETURNS
-
-Do not introduce additional relationships without updating:
-
-GRAPH_SCHEMA.md
+* EXPOSES
 
 ---
 
-# Graph Construction Rules
-
-Repository graph must be deterministic.
-
-Build order:
-
-Phase 1
-
-Repository node
+Do not introduce additional graph types without documentation updates.
 
 ---
 
-Phase 2
+# Retrieval Rules
 
-Folder nodes
+Reference:
 
----
-
-Phase 3
-
-File nodes
+```text id="y6ymj8"
+RAG_ARCHITECTURE.md
+```
 
 ---
 
-Phase 4
+Required Retrieval Order:
 
-Entity nodes
+```text id="9xazw2"
+Intent Detection
 
----
+↓
 
-Phase 5
+Graph Retrieval
 
-Structural edges
+↓
 
-CONTAINS
+Semantic Retrieval
 
----
+↓
 
-Phase 6
+Context Fusion
 
-Semantic edges
+↓
 
-CALLS
+Evidence Validation
 
-IMPORTS
+↓
 
-USES
+Prompt Construction
 
-READS
+↓
 
-WRITES
-
----
-
-Graph constraints:
-
-* No orphan nodes
-* No dangling relationships
-* All nodes contain repositoryId
+Answer Generation
+```
 
 ---
 
-# Embedding Rules
+Repository-specific answers require evidence.
 
-Embeddable entities:
+If evidence is missing:
 
-* Functions
-* Classes
-* Components
-* Routes
-* Services
+Return uncertainty.
 
-Do not embed:
-
-* Entire repositories
-* Entire files
-* Binary files
-* Generated code
+Never hallucinate.
 
 ---
 
-# Search Rules
+# API Rules
 
-Search strategy:
+Reference:
 
-1. Graph Retrieval
-2. Semantic Retrieval
-3. Context Merging
-4. LLM Generation
-
-Do not skip graph retrieval.
+```text id="hyybmg"
+API_SPEC.md
+```
 
 ---
 
-# Chat System Rules
+Requirements:
 
-Chat answers must originate from:
-
-Graph Context
-
-*
-
-Semantic Context
-
-Do not answer solely from LLM prior knowledge.
-
-Repository-specific questions require repository evidence.
+* Input validation
+* Typed DTOs
+* Structured responses
+* Standardized errors
 
 ---
 
-# Flow Reconstruction Rules
+Never:
 
-Flows must be graph-derived.
-
-Examples:
-
-* Login Flow
-* Checkout Flow
-* Registration Flow
-
-Do not allow LLMs to invent execution paths.
-
-Flows must originate from graph traversal.
+* Return inconsistent payloads
+* Change response shapes without updating API_SPEC.md
 
 ---
 
 # Persistence Rules
 
-MongoDB
+Reference:
 
-Stores:
+```text id="u9lbm3"
+DATABASE_SCHEMA.md
+```
+
+---
+
+MongoDB Stores:
 
 * Repositories
+* Analysis Jobs
 * Reports
 * Conversations
-* Analysis Jobs
 
 ---
 
-Neo4j
+Neo4j Stores:
 
-Stores:
-
-* Nodes
-* Relationships
-* Graph Intelligence
+* Graph Nodes
+* Graph Relationships
 
 ---
 
-Qdrant
-
-Stores:
+Qdrant Stores:
 
 * Embeddings
-* Vector Metadata
-
----
-
-# API Development Rules
-
-Requirements:
-
-* Input validation
-* Error handling
-* Typed contracts
-* Structured responses
-
-Avoid:
-
-* Unvalidated payloads
-* Dynamic response shapes
 
 ---
 
@@ -548,40 +552,80 @@ Technology:
 * TypeScript
 * TailwindCSS
 
+---
+
 Requirements:
 
-* Strong typing
 * Reusable components
-* Loading states
 * Error states
+* Loading states
 * Empty states
+* Strong typing
+
+---
 
 Avoid:
 
-* Business logic in components
-* Direct database access
-* API calls scattered across components
+* Business logic in UI
+* Direct DB access
+* Unstructured API calls
+
+---
+
+# Backend Rules
+
+Technology:
+
+* Node.js
+* TypeScript
+* Express
+
+---
+
+Requirements:
+
+* Service Layer
+* Controller Layer
+* Repository Layer
+* Validation Layer
+
+---
+
+Avoid:
+
+* Fat controllers
+* Business logic in routes
+* Hidden dependencies
 
 ---
 
 # Testing Requirements
 
-All significant features require tests.
+All major functionality requires tests.
 
-Minimum expectations:
+---
 
 Unit Tests
+
+Required For:
 
 * Scanner
 * Parser
 * Entity Extraction
+* Relationship Extraction
 * Graph Builder
+* Retrieval Engine
+
+---
 
 Integration Tests
+
+Required For:
 
 * Upload Flow
 * Analysis Pipeline
 * Chat Flow
+* Graph Queries
 
 ---
 
@@ -591,19 +635,23 @@ Repository analysis must be fault tolerant.
 
 If one file fails:
 
-Continue analysis.
+```text id="uhl2jz"
+Log Failure
 
-Mark failure.
+Mark Failure
 
-Log failure.
+Continue Analysis
+```
 
-Do not abort entire repository processing.
+---
+
+Do not abort repository processing.
 
 ---
 
 # Performance Targets
 
-Repository Analysis
+Analysis Time
 
 Target:
 
@@ -611,7 +659,7 @@ Target:
 
 ---
 
-Graph Queries
+Graph Query
 
 Target:
 
@@ -619,7 +667,7 @@ Target:
 
 ---
 
-Vector Search
+Vector Retrieval
 
 Target:
 
@@ -635,50 +683,67 @@ Target:
 
 ---
 
-# Refactoring Rules
+# Documentation Rules
 
-Before major refactoring:
+Whenever implementation changes:
 
-Verify consistency with:
+Update affected documents.
 
-* PRD
-* SYSTEM_DESIGN
-* GRAPH_SCHEMA
+Examples:
 
-Do not perform architecture-changing refactors without updating documentation.
+Graph Change
+
+↓
+
+GRAPH_SCHEMA.md
 
 ---
 
-# Code Quality Rules
+Database Change
 
-Prefer:
+↓
 
-* Small modules
-* Pure functions
-* Dependency injection
-* Explicit interfaces
+DATABASE_SCHEMA.md
 
-Avoid:
+---
 
-* Global mutable state
-* Circular dependencies
-* Hidden side effects
+API Change
+
+↓
+
+API_SPEC.md
+
+---
+
+Analysis Change
+
+↓
+
+ANALYSIS_PIPELINE.md
+
+---
+
+RAG Change
+
+↓
+
+RAG_ARCHITECTURE.md
 
 ---
 
 # Decision Framework
 
-When making implementation decisions:
+Before implementing anything ask:
 
 Question 1
 
-Does this align with the PRD?
+Does this align with PRD.md?
 
 ---
 
 Question 2
 
-Does this preserve graph-first architecture?
+Does this strengthen graph-first architecture?
 
 ---
 
@@ -690,13 +755,19 @@ Does this improve repository intelligence?
 
 Question 4
 
-Does this keep analysis deterministic?
+Does this remain deterministic?
 
 ---
 
-If any answer is "No"
+Question 5
 
-Reconsider the implementation.
+Does this preserve documented architecture?
+
+---
+
+If any answer is NO:
+
+Reconsider implementation.
 
 ---
 
@@ -704,12 +775,28 @@ Reconsider the implementation.
 
 A task is complete only if:
 
-* Implementation completed
+* Code implemented
 * Tests written
-* Documentation updated
-* Build passes
-* Lint passes
 * Types pass
+* Lint passes
+* Build passes
+* Documentation updated
+* Implementation log updated
+* Self review completed
+
+---
+
+# Self Review Checklist
+
+Before finalizing work verify:
+
+* Architecture consistency
+* Type safety
+* Error handling
+* Test coverage
+* Performance impact
+* Security impact
+* Documentation impact
 
 ---
 
@@ -719,6 +806,6 @@ The objective is not to build a chatbot.
 
 The objective is to build a repository intelligence platform.
 
-The Knowledge Graph is the primary asset.
+The Knowledge Graph is the source of truth.
 
-Every major feature should strengthen the graph rather than bypass it.
+Every major feature should strengthen repository intelligence rather than bypass it.

@@ -54,21 +54,15 @@ You must follow these principles:
 
 EPIC:
 
-EPIC-002: React Application
+EPIC-003: API Service
 
 Tasks:
 
-TASK - 007
-TASK - 008
-TASK - 009
-TASK - 010
-TASK - 011
-TASK - 012
-TASK - 013
-TASK - 014
-TASK - 015
-TASK - 016
-
+TASK - 017
+TASK - 018
+TASK - 020
+TASK - 021
+TASK - 022
 ---
 
 # EXECUTION PROCESS

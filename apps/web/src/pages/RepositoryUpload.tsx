@@ -59,7 +59,10 @@ export default function RepositoryUpload() {
         <h3 className="mb-4 text-lg font-semibold text-gray-100">ZIP Upload</h3>
         <form onSubmit={handleZipSubmit}>
           <div
-            onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+            onDragOver={(e) => {
+              e.preventDefault();
+              setDragOver(true);
+            }}
             onDragLeave={() => setDragOver(false)}
             onDrop={handleFileDrop}
             onClick={() => fileInputRef.current?.click()}

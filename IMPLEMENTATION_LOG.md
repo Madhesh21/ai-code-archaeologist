@@ -154,3 +154,68 @@ Verification Results:
 
 Next Recommended Tasks:
 - EPIC-003: API Service (TASK-017 through TASK-022)
+
+---
+
+## EPIC-003: API Service
+
+Date: 2026-06-12
+
+Completed Tasks:
+- TASK-017: Initialize Express application (server starts, health/ready endpoints)
+- TASK-018: Setup TypeScript backend (compile succeeds)
+- TASK-020: Implement error middleware (centralized error handling with AppError classes)
+- TASK-021: Implement logger (request logging with pino)
+- TASK-022: Implement environment validation (zod validation blocks startup on invalid env)
+
+Files Created:
+- apps/api/src/index.ts (server entry point with graceful shutdown)
+- apps/api/src/app.ts (Express app with middleware chain, health/ready routes)
+- apps/api/src/config/env.ts (loads .env, validates via shared package)
+- apps/api/src/middleware/errorHandler.ts (global Express error handler)
+- apps/api/src/middleware/requestLogger.ts (pino-based request/response logging)
+- apps/api/src/utils/errors.ts (AppError, NotFoundError, ValidationError, InternalError)
+- apps/api/src/utils/logger.ts (pino logger with pino-pretty in dev)
+
+Files Modified:
+- apps/api/package.json (added scripts: dev, build, start, typecheck; added dependencies)
+- apps/api/tsconfig.json (added Node types reference, project reference to shared package)
+- packages/shared/package.json (added type:module, main, types, exports fields; build/typecheck scripts)
+- eslint.config.js (added argsIgnorePattern for underscore-prefixed unused params)
+
+Dependencies Added:
+- express ^4.21.0
+- pino ^9.5.0
+- pino-http ^10.3.0 (present but not directly used due to type compat; logger uses pino directly)
+- dotenv ^16.4.7
+- @types/express ^4.17.21 (dev)
+- @types/node ^22.10.0 (dev)
+- pino-pretty ^13.0.0 (dev)
+- tsx ^4.19.0 (dev)
+- @types/node ^22.19.21 (dev, shared package)
+- typescript ^5.9.3 (dev, shared package)
+
+Architectural Decisions:
+- Express 4.x for stability (Express 5.x still experimental)
+- Pino logger over Winston for better performance and structured JSON logs
+- Custom request logger middleware (function-based) instead of pino-http due to ESM/CJS interop issues
+- AppError class hierarchy with HTTP status codes and error codes matching API_SPEC.md error contract
+- Shared package env validation reused (not duplicated) for startup validation
+- Graceful shutdown handling (SIGTERM/SIGINT)
+- Project references properly configured between api and shared packages
+- ESM module type configured for both api and shared packages
+
+Known Risks:
+- pino-http dependency is unused due to CJS/NodeNext interop issue with pino-http v10 types; custom logger middleware used instead
+- Shared package dist must be built before API compilation when using --build mode with project references
+- Environment validation blocks startup without valid .env — intentional per TASK-022 requirements
+
+Verification Results:
+- TypeScript type check: PASSED
+- ESLint: PASSED (no errors)
+- Prettier format check: PASSED (all files formatted)
+- TypeScript build: PASSED (16 output files generated)
+
+Next Recommended Tasks:
+- EPIC-004: MongoDB (TASK-023 through TASK-027) — database connection and repository schemas
+- TASK-019: Implement health endpoint (endpoints already exist as part of app.ts, needs DB connectivity checks added)

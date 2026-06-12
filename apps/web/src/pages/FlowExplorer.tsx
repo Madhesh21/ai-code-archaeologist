@@ -1,12 +1,6 @@
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import {
-  ReactFlow,
-  Background,
-  Controls,
-  type Node,
-  type Edge,
-} from '@xyflow/react';
+import { ReactFlow, Background, Controls, type Node, type Edge } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
 export default function FlowExplorer() {

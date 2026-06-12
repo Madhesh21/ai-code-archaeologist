@@ -27,10 +27,7 @@ export default function RepositoryOverview() {
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {detailSections.map((s) => (
-          <div
-            key={s.label}
-            className="rounded-lg border border-gray-800 bg-gray-900 p-4"
-          >
+          <div key={s.label} className="rounded-lg border border-gray-800 bg-gray-900 p-4">
             <p className="text-xs text-gray-500">{s.label}</p>
             <p className="mt-1 text-sm font-medium text-gray-200">{s.value}</p>
           </div>

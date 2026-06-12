@@ -9,9 +9,7 @@ export default function Sidebar() {
   return (
     <aside className="flex w-56 flex-col border-r border-gray-800 bg-gray-900">
       <div className="flex h-14 items-center border-b border-gray-800 px-4">
-        <span className="text-sm font-bold tracking-tight text-indigo-400">
-          Archaeologist
-        </span>
+        <span className="text-sm font-bold tracking-tight text-indigo-400">Archaeologist</span>
       </div>
       <nav className="flex-1 space-y-1 p-3">
         {navItems.map((item) => (
