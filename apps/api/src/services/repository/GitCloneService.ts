@@ -1,6 +1,7 @@
 import path from 'path';
 import fs from 'fs/promises';
 import simpleGit from 'simple-git';
+import { InternalError } from '../../utils/errors.js';
 
 export class GitCloneService {
   constructor(private readonly basePath: string) {}
@@ -13,7 +14,9 @@ export class GitCloneService {
       await git.clone(url, destDir, ['--depth=1']);
       return destDir;
     } catch (error) {
-      throw new Error(`Failed to clone repository: ${error instanceof Error ? error.message : String(error)}`);
+      throw new InternalError(
+        `Failed to clone repository: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
