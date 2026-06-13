@@ -4,7 +4,11 @@ import { app } from './app.js';
 import { env } from './config/env.js';
 import { logger } from './utils/logger.js';
 async function ensureDirectories() {
-    const dirs = [path.join(env.UPLOAD_DIR, 'temp'), path.join(env.UPLOAD_DIR, 'repositories')];
+    const dirs = [
+        path.join(env.UPLOAD_DIR, 'temp'),
+        path.join(env.UPLOAD_DIR, 'repositories'),
+        path.join(env.UPLOAD_DIR, 'clones'),
+    ];
     for (const dir of dirs) {
         await fs.mkdir(dir, { recursive: true });
     }
