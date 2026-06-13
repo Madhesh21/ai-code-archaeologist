@@ -54,16 +54,19 @@ You must follow these principles:
 
 EPIC:
 
-EPIC-008: Repository Scanner
+EPIC-009: Technology Detection
 
 Tasks:
 
-TASK - 041
-TASK - 042
-TASK - 043
-TASK - 044
-TASK - 045
-TASK - 046
+TASK - 047
+TASK - 048
+TASK - 049
+TASK - 050
+TASK - 051
+TASK - 052
+TASK - 053
+TASK - 054
+TASK - 055
 ---
 
 # EXECUTION PROCESS

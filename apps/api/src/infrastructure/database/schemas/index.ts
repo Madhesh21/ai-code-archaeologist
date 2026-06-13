@@ -8,3 +8,5 @@ export type {
   IRepositoryTreeFile,
   IRepositoryTreeFolder,
 } from './RepositoryTree.js';
+export { TechnologyProfileModel } from './TechnologyProfile.js';
+export type { ITechnologyProfile } from './TechnologyProfile.js';

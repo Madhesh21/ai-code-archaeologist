@@ -642,6 +642,80 @@ Verification Results:
 - Analysis-engine tests: PASSED (21/21 tests across 2 test files)
 - API tests: PASSED (27/27 tests across 5 test files)
 
+---
+
+## EPIC-009: Technology Detection
+
+Date: 2026-06-13
+
+Completed Tasks:
+- TASK-047: Parse package.json (PackageJsonParser — reads all package.json files from scan result, merges dependencies)
+- TASK-048: Detect React (FrontendDetector — detects from react/react-dom dependencies, Next.js config files)
+- TASK-049: Detect Next.js (FrontendDetector — detects from next dependency or next.config.* files)
+- TASK-050: Detect Express (BackendDetector — detects from express dependency)
+- TASK-051: Detect NestJS (BackendDetector — detects from @nestjs/core dependency)
+- TASK-052: Detect MongoDB (DatabaseDetector — detects from mongoose/mongodb dependencies)
+- TASK-053: Detect PostgreSQL (DatabaseDetector — detects from pg/sequelize/typeorm/prisma dependencies)
+- TASK-054: Detect Docker (InfrastructureDetector — detects from Dockerfile, docker-compose.yml, .dockerignore)
+- TASK-055: Generate technology profile (TechnologyDetectorService orchestrator + TechnologyProfile persistence)
+
+Files Created:
+- packages/analysis-engine/src/technology/DetectorTypes.ts (expanded — added TechnologyDetector interface)
+- packages/analysis-engine/src/technology/PackageJsonParser.ts (dependency extractor from package.json files)
+- packages/analysis-engine/src/technology/FrontendDetector.ts (React, Next.js, Vue, Angular, Svelte, etc.)
+- packages/analysis-engine/src/technology/BackendDetector.ts (Express, NestJS, Fastify, Koa, Hono, etc.)
+- packages/analysis-engine/src/technology/DatabaseDetector.ts (MongoDB, PostgreSQL, MySQL, Redis, SQLite, etc.)
+- packages/analysis-engine/src/technology/InfrastructureDetector.ts (Docker, Docker Compose, CI/CD, Testing)
+- packages/analysis-engine/src/technology/TechnologyDetectorService.ts (orchestrator with fault tolerance)
+- packages/analysis-engine/src/technology/index.ts (barrel export)
+- packages/analysis-engine/src/technology/__tests__/PackageJsonParser.test.ts (6 tests)
+- packages/analysis-engine/src/technology/__tests__/FrontendDetector.test.ts (8 tests)
+- packages/analysis-engine/src/technology/__tests__/BackendDetector.test.ts (7 tests)
+- packages/analysis-engine/src/technology/__tests__/DatabaseDetector.test.ts (9 tests)
+- packages/analysis-engine/src/technology/__tests__/InfrastructureDetector.test.ts (10 tests)
+- packages/analysis-engine/src/technology/__tests__/TechnologyDetectorService.test.ts (6 tests)
+- apps/api/src/infrastructure/database/schemas/TechnologyProfile.ts (Mongoose schema)
+- apps/api/src/infrastructure/database/repositories/TechnologyProfileRepository.ts (CRUD + upsert)
+- apps/api/src/routes/technology.ts (GET/POST /repositories/:id/technology)
+
+Files Modified:
+- packages/analysis-engine/src/index.ts (added technology module exports)
+- apps/api/src/services/analysis/AnalysisService.ts (added detectTechnologies method)
+- apps/api/src/routes/index.ts (registered technologyRouter)
+- apps/api/src/infrastructure/database/schemas/index.ts (added TechnologyProfile exports)
+- apps/api/src/infrastructure/database/repositories/index.ts (added TechnologyProfileRepository export)
+- apps/api/src/infrastructure/index.ts (added TechnologyProfile exports)
+
+Dependencies Added:
+- None — all implementation uses existing project dependencies
+
+Architectural Decisions:
+- Detection logic lives in packages/analysis-engine (pure TypeScript, no external deps); persistence in apps/api
+- PackageJsonParser reads files from disk using repositoryPath from scan result
+- Each technology category gets its own detector class implementing TechnologyDetector interface (strategy pattern)
+- TechnologyDetectorService orchestrates all detectors with fault tolerance (failures are logged, not propagated)
+- Confidence scoring: 1.0 for dependency/file matches, 0.7 for inferred detection (script analysis)
+- Docker detection is file-presence-based (Dockerfile, docker-compose.yml, .dockerignore)
+- CI/CD and testing frameworks detected alongside infrastructure (InfrastructureDetector handles all non-framework/non-database categories)
+- TechnologyProfile persisted to MongoDB via upsert (prevents duplicates on re-analysis)
+- Two API endpoints: GET (retrieve existing) and POST (trigger detection)
+- Frontend detector also checks for next.config.* files for projects that use Next.js without explicit dependency listing
+
+Known Risks:
+- Multiple package.json files in monorepos have their dependencies merged — later values overwrite earlier ones for same dependency name
+- Docker detection is file-presence-only (no Dockerfile content analysis)
+- No lockfile parsing; dependencies that only appear in lockfiles are not detected
+- Database detection is entirely dependency-based; connection strings in source code are not analyzed
+- `node` as an npm package name could be confused with Node.js runtime detection (uncommon but possible)
+
+Verification Results:
+- TypeScript build (tsc -b): PASSED
+- TypeScript type check (tsc --noEmit): PASSED
+- ESLint: PASSED (no errors)
+- Prettier format check: PASSED (all files formatted)
+- Analysis-engine tests: PASSED (67/67 tests across 8 test files — 46 new + 21 existing)
+- API tests: PASSED (27/27 tests across 5 test files)
+
 Next Recommended Tasks:
-- EPIC-009: Technology Detection (TASK-047 through TASK-055)
 - EPIC-010: AST Analysis Engine (TASK-056 through TASK-061)
+- EPIC-011: Entity Extraction (TASK-062 through TASK-071)
