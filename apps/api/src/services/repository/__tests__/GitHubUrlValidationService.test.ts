@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { ValidationError } from '../../../utils/errors.js';
 import { GitHubUrlValidationService } from '../GitHubUrlValidationService.js';
 
 describe('GitHubUrlValidationService', () => {
