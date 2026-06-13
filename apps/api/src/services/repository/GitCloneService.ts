@@ -10,7 +10,7 @@ export class GitCloneService {
     const destDir = path.join(this.basePath, repositoryId);
     await fs.mkdir(this.basePath, { recursive: true });
     try {
-      const git = simpleGit();
+      const git = simpleGit({ config: ['http.lowSpeedLimit=1000', 'http.lowSpeedTime=120'] });
       await git.clone(url, destDir, ['--depth=1']);
       return destDir;
     } catch (error) {
