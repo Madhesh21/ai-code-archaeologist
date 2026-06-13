@@ -54,14 +54,14 @@ You must follow these principles:
 
 EPIC:
 
-EPIC-005: Graph Database
+EPIC-007: Github Import
 
 Tasks:
 
-TASK - 028
-TASK - 029
-TASK - 030
-TASK - 031
+TASK - 037
+TASK - 038
+TASK - 039
+TASK - 040
 ---
 
 # EXECUTION PROCESS

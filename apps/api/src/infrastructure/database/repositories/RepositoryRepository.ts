@@ -16,4 +16,8 @@ export class RepositoryRepository extends MongoRepository<IRepository> {
     const doc = await RepositoryModel.findOne({ name }).lean();
     return this.toEntity(doc as Record<string, unknown> | null);
   }
+
+  async updateStatus(id: string, status: IRepository['status']): Promise<IRepository | null> {
+    return this.update(id, { status } as Partial<IRepository>);
+  }
 }

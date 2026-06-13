@@ -1,7 +1,18 @@
 export interface IRepository {
   name: string;
-  status: 'pending' | 'analyzing' | 'completed' | 'failed';
-  source: 'upload' | 'github';
+  description?: string;
+  sourceType: 'upload' | 'github';
+  sourceUrl?: string;
+  localPath?: string;
+  status:
+    | 'pending'
+    | 'uploaded'
+    | 'scanning'
+    | 'analyzing'
+    | 'graph_building'
+    | 'report_generating'
+    | 'ready'
+    | 'failed';
   createdAt: Date;
   updatedAt: Date;
 }

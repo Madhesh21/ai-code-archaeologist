@@ -7,6 +7,7 @@ const envSchema = z.object({
     NEO4J_USER: z.string(),
     NEO4J_PASSWORD: z.string(),
     QDRANT_URL: z.string(),
+    UPLOAD_DIR: z.string().default('./uploads'),
     OPENAI_API_KEY: z.string(),
 });
 export function validateEnv(env) {

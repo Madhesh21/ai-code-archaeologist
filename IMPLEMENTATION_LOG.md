@@ -445,5 +445,73 @@ Verification Results:
 - Prettier format check: PASSED (all files formatted)
 
 Next Recommended Tasks:
-- EPIC-006: Repository Upload (TASK-032 through TASK-036)
 - EPIC-007: GitHub Import (TASK-037 through TASK-040)
+
+---
+
+## EPIC-006: Repository Upload
+
+Date: 2026-06-12
+
+Completed Tasks:
+- TASK-032: Implement ZIP upload endpoint (POST /api/v1/repositories/upload with multer multipart handling)
+- TASK-033: Implement ZIP extraction service (adm-zip based extraction with path traversal protection)
+- TASK-034: Implement repository validation (file size limit 500MB, supported source file check, empty/corrupt rejection)
+- TASK-035: Implement file storage service (persistent storage by repositoryId, temp cleanup)
+- TASK-036: Implement repository status tracking (PENDING → UPLOADED status update via RepositoryRepository.updateStatus)
+
+Files Created:
+- apps/api/src/services/repository/ZipExtractionService.ts (ZIP extraction with path traversal protection)
+- apps/api/src/services/repository/RepositoryValidationService.ts (size, structure, source file validation)
+- apps/api/src/services/repository/FileStorageService.ts (persistent storage management with cleanup)
+- apps/api/src/services/repository/UploadService.ts (orchestrator: validate → extract → store → track)
+- apps/api/src/services/repository/index.ts (barrel exports)
+- apps/api/src/services/repository/__tests__/RepositoryValidationService.test.ts (9 unit tests)
+- apps/api/src/services/repository/__tests__/ZipExtractionService.test.ts (3 unit tests)
+- apps/api/src/routes/repository.ts (POST /upload, GET /:id with multer middleware)
+- apps/api/vitest.config.ts (vitest configuration for API tests)
+
+Files Modified:
+- apps/api/src/infrastructure/database/schemas/interfaces.ts (expanded IRepository with description, sourceType, sourceUrl, localPath, full status enum)
+- apps/api/src/infrastructure/database/schemas/Repository.ts (updated schema fields and enum to match DATABASE_SCHEMA.md)
+- apps/api/src/infrastructure/database/repositories/RepositoryRepository.ts (added updateStatus method)
+- apps/api/src/routes/index.ts (registered repositoryRouter)
+- apps/api/src/index.ts (added ensureDirectories for upload storage paths at startup)
+- apps/api/package.json (added multer, adm-zip, vitest dependencies; test scripts)
+- packages/shared/src/env.ts (added UPLOAD_DIR env var with default ./uploads)
+- eslint.config.js (relaxed no-explicit-any rule for test files)
+- .env.example (added UPLOAD_DIR environment variable)
+- apps/web/src/pages/RepositoryUpload.tsx (wired ZIP upload to API with loading/success/error states)
+
+Dependencies Added:
+- multer ^1.4.5-lts.1 (file upload multipart handling)
+- adm-zip ^0.5.17 (ZIP archive extraction)
+- @types/multer ^2.1.0 (dev, TypeScript definitions)
+- @types/adm-zip ^0.5.8 (dev, TypeScript definitions)
+- vitest ^4.1.8 (dev, test framework)
+
+Architectural Decisions:
+- Upload services placed in apps/api/src/services/repository/ (API responsibility, not analysis-engine)
+- Database schema updated to match DATABASE_SCHEMA.md (IRepository interface expanded with missing fields)
+- Status tracking uses existing RepositoryRepository.update method via updateStatus convenience method
+- Storage path configurable via UPLOAD_DIR env var (defaults to ./uploads)
+- Multer v1 used over v2 due to stable @types/multer compatibility (v2 lacks type definitions)
+- AdmZip chosen for ZIP extraction (stable, well-tested, ESM-compatible)
+- Temp directory cleanup in finally blocks prevents file leaks on failures
+- Frontend upload wired with loading spinner, success state (repositoryId display), and error message
+- vitest.config.ts created for isolated API test configuration (node environment, test file patterns)
+
+Known Risks:
+- Multer v1 has known vulnerabilities (deprecated); upgrade to v2 when type definitions stabilize
+- ZIP extraction loads entire archive into memory (adm-zib synchronous); large archives may cause memory pressure
+- No authentication layer yet (planned for future); upload endpoint is open
+- Storage cleanup on server restart not handled (stale temp files may remain)
+- Test coverage limited to unit tests for validation and extraction; no integration tests for route/upload flow
+
+Verification Results:
+- TypeScript type check: PASSED
+- ESLint: PASSED (no errors)
+- Prettier format check: PASSED (all files formatted)
+- API build: PASSED
+- Web build: PASSED (247 modules, 3 output files)
+- Unit tests: PASSED (12/12 tests across 2 test files)

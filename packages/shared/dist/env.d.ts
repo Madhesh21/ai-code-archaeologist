@@ -7,6 +7,7 @@ declare const envSchema: z.ZodObject<{
     NEO4J_USER: z.ZodString;
     NEO4J_PASSWORD: z.ZodString;
     QDRANT_URL: z.ZodString;
+    UPLOAD_DIR: z.ZodDefault<z.ZodString>;
     OPENAI_API_KEY: z.ZodString;
 }, "strip", z.ZodTypeAny, {
     PORT: number;
@@ -16,6 +17,7 @@ declare const envSchema: z.ZodObject<{
     NEO4J_USER: string;
     NEO4J_PASSWORD: string;
     QDRANT_URL: string;
+    UPLOAD_DIR: string;
     OPENAI_API_KEY: string;
 }, {
     MONGODB_URI: string;
@@ -26,6 +28,7 @@ declare const envSchema: z.ZodObject<{
     OPENAI_API_KEY: string;
     PORT?: number | undefined;
     NODE_ENV?: "development" | "production" | "test" | undefined;
+    UPLOAD_DIR?: string | undefined;
 }>;
 export declare function validateEnv(env: Record<string, string | undefined>): {
     PORT: number;
@@ -35,6 +38,7 @@ export declare function validateEnv(env: Record<string, string | undefined>): {
     NEO4J_USER: string;
     NEO4J_PASSWORD: string;
     QDRANT_URL: string;
+    UPLOAD_DIR: string;
     OPENAI_API_KEY: string;
 };
 export type Env = z.infer<typeof envSchema>;

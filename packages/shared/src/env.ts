@@ -11,6 +11,8 @@ const envSchema = z.object({
 
   QDRANT_URL: z.string(),
 
+  UPLOAD_DIR: z.string().default('./uploads'),
+
   OPENAI_API_KEY: z.string(),
 });
 
