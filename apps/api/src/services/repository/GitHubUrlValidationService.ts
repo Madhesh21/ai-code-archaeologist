@@ -11,7 +11,10 @@ export class GitHubUrlValidationService {
       throw new ValidationError('Invalid GitHub repository URL');
     }
 
-    const trimmed = url.trim().replace(/\.git$/, '').replace(/\/$/, '');
+    const trimmed = url
+      .trim()
+      .replace(/\.git$/, '')
+      .replace(/\/$/, '');
 
     const pattern = /^https:\/\/github\.com\/([a-zA-Z0-9._-]+)\/([a-zA-Z0-9._-]+)$/;
     const match = trimmed.match(pattern);

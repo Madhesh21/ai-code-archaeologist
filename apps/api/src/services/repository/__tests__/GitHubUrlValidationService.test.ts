@@ -22,23 +22,23 @@ describe('GitHubUrlValidationService', () => {
     });
 
     it('rejects non-GitHub URLs', () => {
-      expect(() => service.validate('https://gitlab.com/owner/repo')).toThrow('Invalid GitHub repository URL');
+      expect(() => service.validate('https://gitlab.com/owner/repo')).toThrow(ValidationError);
     });
 
     it('rejects URLs without owner and repo', () => {
-      expect(() => service.validate('https://github.com')).toThrow('Invalid GitHub repository URL');
+      expect(() => service.validate('https://github.com')).toThrow(ValidationError);
     });
 
     it('rejects URLs with only owner', () => {
-      expect(() => service.validate('https://github.com/owner')).toThrow('Invalid GitHub repository URL');
+      expect(() => service.validate('https://github.com/owner')).toThrow(ValidationError);
     });
 
     it('rejects empty string', () => {
-      expect(() => service.validate('')).toThrow('Invalid GitHub repository URL');
+      expect(() => service.validate('')).toThrow(ValidationError);
     });
 
     it('rejects non-URL text', () => {
-      expect(() => service.validate('not-a-url')).toThrow('Invalid GitHub repository URL');
+      expect(() => service.validate('not-a-url')).toThrow(ValidationError);
     });
   });
 });

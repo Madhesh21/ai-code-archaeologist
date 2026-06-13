@@ -6,7 +6,11 @@ describe('GitHubImportService', () => {
   let mockValidator: { validate: ReturnType<typeof vi.fn> };
   let mockCloneService: { clone: ReturnType<typeof vi.fn>; cleanup: ReturnType<typeof vi.fn> };
   let mockStorage: { moveToStorage: ReturnType<typeof vi.fn>; cleanup: ReturnType<typeof vi.fn> };
-  let mockRepoRepo: { create: ReturnType<typeof vi.fn>; update: ReturnType<typeof vi.fn>; updateStatus: ReturnType<typeof vi.fn> };
+  let mockRepoRepo: {
+    create: ReturnType<typeof vi.fn>;
+    update: ReturnType<typeof vi.fn>;
+    updateStatus: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -66,9 +70,7 @@ describe('GitHubImportService', () => {
     mockStorage.moveToStorage.mockRejectedValue(new Error('Disk full'));
     mockRepoRepo.create.mockResolvedValue({ id: 'repo456' });
 
-    await expect(
-      service.importFromGitHub('https://github.com/o/r'),
-    ).rejects.toThrow('Disk full');
+    await expect(service.importFromGitHub('https://github.com/o/r')).rejects.toThrow('Disk full');
 
     expect(mockCloneService.cleanup).toHaveBeenCalledWith('repo456');
     expect(mockRepoRepo.updateStatus).toHaveBeenCalledWith('repo456', 'failed');
@@ -79,9 +81,7 @@ describe('GitHubImportService', () => {
     mockCloneService.clone.mockRejectedValue(new Error('Not found'));
     mockRepoRepo.create.mockResolvedValue({ id: 'repo789' });
 
-    await expect(
-      service.importFromGitHub('https://github.com/o/r'),
-    ).rejects.toThrow('Not found');
+    await expect(service.importFromGitHub('https://github.com/o/r')).rejects.toThrow('Not found');
 
     expect(mockCloneService.cleanup).toHaveBeenCalledWith('repo789');
     expect(mockRepoRepo.updateStatus).toHaveBeenCalledWith('repo789', 'failed');
@@ -92,9 +92,9 @@ describe('GitHubImportService', () => {
       throw new Error('Invalid GitHub repository URL');
     });
 
-    await expect(
-      service.importFromGitHub('not-a-url'),
-    ).rejects.toThrow('Invalid GitHub repository URL');
+    await expect(service.importFromGitHub('not-a-url')).rejects.toThrow(
+      'Invalid GitHub repository URL',
+    );
 
     expect(mockRepoRepo.create).not.toHaveBeenCalled();
     expect(mockCloneService.clone).not.toHaveBeenCalled();

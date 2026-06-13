@@ -52,9 +52,9 @@ describe('GitCloneService', () => {
 
     await service.cleanup('repo-123');
 
-    expect(fs.rm).toHaveBeenCalledWith(
-      path.join('/tmp/test-base', 'repo-123'),
-      { recursive: true, force: true },
-    );
+    expect(fs.rm).toHaveBeenCalledWith(path.join('/tmp/test-base', 'repo-123'), {
+      recursive: true,
+      force: true,
+    });
   });
 });
