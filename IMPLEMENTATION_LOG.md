@@ -445,7 +445,7 @@ Verification Results:
 - Prettier format check: PASSED (all files formatted)
 
 Next Recommended Tasks:
-- EPIC-007: GitHub Import (TASK-037 through TASK-040)
+- EPIC-008: Repository Scanner (TASK-041 through TASK-046)
 
 ---
 
@@ -515,3 +515,58 @@ Verification Results:
 - API build: PASSED
 - Web build: PASSED (247 modules, 3 output files)
 - Unit tests: PASSED (12/12 tests across 2 test files)
+
+---
+
+## EPIC-007: GitHub Import
+
+Date: 2026-06-12
+
+Completed Tasks:
+- TASK-037: Implement GitHub URL validation (GitHubUrlValidationService validates URL format, extracts owner/repo)
+- TASK-038: Implement repository cloning service (GitCloneService with simple-git shallow clone + cleanup)
+- TASK-039: Store cloned repository (reuses FileStorageService from EPIC-006)
+- TASK-040: Create ingestion workflow (GitHubImportService orchestrator: validate → create → clone → store → status)
+
+Files Created:
+- apps/api/src/services/repository/GitHubUrlValidationService.ts (URL validation + GitHubRepoInfo interface)
+- apps/api/src/services/repository/GitCloneService.ts (git clone with simple-git, cleanup method)
+- apps/api/src/services/repository/GitHubImportService.ts (orchestrator with error rollback)
+- apps/api/src/services/repository/__tests__/GitHubUrlValidationService.test.ts (8 unit tests)
+- apps/api/src/services/repository/__tests__/GitCloneService.test.ts (3 unit tests)
+- apps/api/src/services/repository/__tests__/GitHubImportService.test.ts (4 unit tests)
+
+Files Modified:
+- apps/api/src/services/repository/index.ts (added exports for 3 new services)
+- apps/api/src/routes/repository.ts (added POST /repositories/github route)
+- apps/api/src/services/repository/GitCloneService.ts (build fix: named import for simple-git)
+- apps/api/package.json (added simple-git dependency)
+
+Dependencies Added:
+- simple-git ^3.36.0 (git clone operations)
+
+Architectural Decisions:
+- Followed same 3-layer pattern as EPIC-006 (validate → execute → orchestrate)
+- simple-git chosen over child_process.spawn for typed, promise-based API with better error handling
+- Public repos only for MVP (no auth scaffolding); private repo support deferred
+- Shallow clone (--depth=1) sufficient for analysis-only use case (no git history needed)
+- Error handling: cleanup clone directory + update status=failed on any failure after creation
+- ValidationError used for input validation (consistent with RepositoryValidationService)
+- InternalError used for clone failures (operational errors, distinct from validation)
+- Reused existing FileStorageService for cloning into UPLOAD_DIR/clones/ structure
+
+Known Risks:
+- simple-git spawns actual git process; requires git to be installed on the server
+- Shallow clone may fail on very large repositories; no timeout configured (could hang)
+- No concurrency limits for concurrent clone operations
+- No git LFS support; LFS-tracked files will appear as pointer files
+- No progress feedback for large clones (endpoint blocks until clone completes)
+- PostgreSQL/MariaDB challenge noted: repositoryId extraction via Mongoose magic (as unknown as Record) is fragile
+
+Verification Results:
+- TypeScript type check: PASSED
+- ESLint: PASSED (no errors)
+- Prettier format check: PASSED (all files formatted)
+- API build: PASSED
+- Web build: PASSED (247 modules, 3 output files)
+- Unit tests: PASSED (27/27 tests across 5 test files)
