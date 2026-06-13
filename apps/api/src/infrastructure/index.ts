@@ -11,7 +11,18 @@ export type {
   IConversation,
   IMessage,
 } from './database/schemas/interfaces.js';
-export { RepositoryModel, AnalysisModel, ConversationModel } from './database/schemas/index.js';
+export type {
+  IRepositoryTree,
+  IRepositoryTreeFile,
+  IRepositoryTreeFolder,
+} from './database/schemas/RepositoryTree.js';
+export {
+  RepositoryModel,
+  AnalysisModel,
+  ConversationModel,
+  RepositoryTreeModel,
+} from './database/schemas/index.js';
+export { RepositoryTreeRepository } from './database/repositories/RepositoryTreeRepository.js';
 export { GraphClient } from './graph/GraphClient.js';
 export { Neo4jClient } from './graph/Neo4jClient.js';
 export { NodeService } from './graph/services/NodeService.js';

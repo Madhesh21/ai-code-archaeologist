@@ -570,3 +570,78 @@ Verification Results:
 - API build: PASSED
 - Web build: PASSED (247 modules, 3 output files)
 - Unit tests: PASSED (27/27 tests across 5 test files)
+
+---
+
+## EPIC-008: Repository Scanner
+
+Date: 2026-06-13
+
+Completed Tasks:
+- TASK-041: Implement recursive file scanner (ScannerService with async directory traversal)
+- TASK-042: Ignore node_modules (IgnoreRules with default ignore patterns)
+- TASK-043: Ignore build directories (dist, build, coverage, .next, .cache, .git)
+- TASK-044: Collect file metadata (path, extension, size, MD5 hash via streaming crypto)
+- TASK-045: Generate repository tree (structured ScanResult with files[] and folders[])
+- TASK-046: Persist repository tree (MongoDB RepositoryTree collection + AnalysisService orchestrator)
+
+Files Created:
+- packages/analysis-engine/src/scanner/types.ts (FileInfo, FolderInfo, ScanResult, ScannerOptions types)
+- packages/analysis-engine/src/scanner/IgnoreRules.ts (default ignore rules + custom patterns)
+- packages/analysis-engine/src/scanner/ScannerService.ts (recursive scanner with hash computation)
+- packages/analysis-engine/src/scanner/index.ts (barrel export)
+- packages/analysis-engine/src/scanner/__tests__/IgnoreRules.test.ts (11 unit tests)
+- packages/analysis-engine/src/scanner/__tests__/ScannerService.test.ts (10 unit tests)
+- packages/analysis-engine/vitest.config.ts (test configuration)
+- apps/api/src/infrastructure/database/schemas/RepositoryTree.ts (Mongoose schema for scan results)
+- apps/api/src/infrastructure/database/repositories/RepositoryTreeRepository.ts (CRUD for scan results)
+- apps/api/src/services/analysis/AnalysisService.ts (orchestrator: scan → persist → status)
+- apps/api/src/services/analysis/index.ts (barrel export)
+- apps/api/src/routes/analysis.ts (POST /repositories/:id/scan, GET /repositories/:id/tree)
+
+Files Modified:
+- packages/analysis-engine/src/index.ts (re-export scanner module)
+- packages/analysis-engine/package.json (added vitest, @types/node devDeps; test scripts)
+- packages/analysis-engine/tsconfig.json (added node types)
+- apps/api/package.json (added @archaeologist/analysis-engine workspace dep)
+- apps/api/tsconfig.json (added analysis-engine project reference)
+- apps/api/src/infrastructure/database/schemas/index.ts (added RepositoryTree exports)
+- apps/api/src/infrastructure/database/repositories/index.ts (added RepositoryTreeRepository export)
+- apps/api/src/infrastructure/index.ts (added RepositoryTree exports)
+- apps/api/src/routes/index.ts (registered analysisRouter)
+- apps/web/src/pages/RepositoryOverview.tsx (scan button + tree display)
+- docs/architecture/DATABASE_SCHEMA.md (added repository_trees collection)
+
+Dependencies Added:
+- vitest ^4.1.8 (dev, packages/analysis-engine)
+- @types/node ^22.10.0 (dev, packages/analysis-engine)
+- @archaeologist/analysis-engine workspace:* (apps/api)
+
+Architectural Decisions:
+- Scanner lives in packages/analysis-engine (pure logic, Node.js fs + crypto only)
+- Persistence lives in apps/api (MongoDB schema, repository, orchestrator service)
+- Scanner returns deterministic ScanResult (files + folders) — same repo always produces same output
+- MD5 hash computed via streaming crypto (memory efficient for large files)
+- IgnoreRules uses case-insensitive basename matching (node_modules, Node_Modules, NODE_MODULES all ignored)
+- RepositoryTree stored as single MongoDB document per scan (subdocument arrays for files/folders)
+- AnalysisService handles status transitions: null → scanning → analyzing (or → failed on error)
+- Scan route accepts POST /repositories/:id/scan; tree retrieval at GET /repositories/:id/tree
+- Frontend shows scan button, file/folder counts, and folder structure preview
+
+Known Risks:
+- MD5 hash computation may be slow on very large repositories (100k+ files); consider faster hash or opt-in hashing for future
+- Single MongoDB document for repository tree may exceed 16MB limit for repos with extremely deep structures (>200k files)
+- No concurrency guard for simultaneous scan requests on same repository
+- Tree retrieval endpoint returns full file list (potentially large payload); pagination may be needed
+
+Verification Results:
+- TypeScript build (tsc -b): PASSED
+- TypeScript type check: PASSED
+- ESLint: PASSED (no errors)
+- Prettier format check: PASSED (all files formatted)
+- Analysis-engine tests: PASSED (21/21 tests across 2 test files)
+- API tests: PASSED (27/27 tests across 5 test files)
+
+Next Recommended Tasks:
+- EPIC-009: Technology Detection (TASK-047 through TASK-055)
+- EPIC-010: AST Analysis Engine (TASK-056 through TASK-061)

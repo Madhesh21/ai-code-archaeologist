@@ -378,6 +378,49 @@ createdAt
 
 ---
 
+# Collection: repository_trees
+
+Stores scan results (repository file inventory).
+
+---
+
+## Schema
+
+```json
+{
+  "_id": "ObjectId",
+
+  "repositoryId": "ObjectId",
+
+  "files": [
+    {
+      "path": "",
+      "extension": "",
+      "size": 0,
+      "hash": ""
+    }
+  ],
+
+  "folders": [
+    {
+      "path": ""
+    }
+  ],
+
+  "scannedAt": "Date"
+}
+```
+
+---
+
+## Indexes
+
+```javascript
+repositoryId
+```
+
+---
+
 # Collection: repository_statistics
 
 Stores aggregated metrics.

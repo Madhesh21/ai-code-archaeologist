@@ -54,14 +54,16 @@ You must follow these principles:
 
 EPIC:
 
-EPIC-007: Github Import
+EPIC-008: Repository Scanner
 
 Tasks:
 
-TASK - 037
-TASK - 038
-TASK - 039
-TASK - 040
+TASK - 041
+TASK - 042
+TASK - 043
+TASK - 044
+TASK - 045
+TASK - 046
 ---
 
 # EXECUTION PROCESS
