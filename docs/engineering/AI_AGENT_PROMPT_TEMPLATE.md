@@ -54,19 +54,17 @@ You must follow these principles:
 
 EPIC:
 
-EPIC-009: Technology Detection
+EPIC-010: AST Analysis Engine
 
 Tasks:
 
-TASK - 047
-TASK - 048
-TASK - 049
-TASK - 050
-TASK - 051
-TASK - 052
-TASK - 053
-TASK - 054
-TASK - 055
+TASK - 056
+TASK - 057
+TASK - 058
+TASK - 059
+TASK - 060
+TASK - 061
+
 ---
 
 # EXECUTION PROCESS

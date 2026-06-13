@@ -17,8 +17,12 @@
     "test": "vitest run",
     "test:watch": "vitest"
   },
+  "dependencies": {
+    "@babel/parser": "^7.26.0",
+    "@babel/types": "^7.26.0",
+    "typescript": "^5.7.0"
+  },
   "devDependencies": {
-    "typescript": "^5.7.0",
     "vitest": "^4.1.8",
     "@types/node": "^22.10.0"
   }

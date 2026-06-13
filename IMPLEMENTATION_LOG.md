@@ -717,5 +717,74 @@ Verification Results:
 - API tests: PASSED (27/27 tests across 5 test files)
 
 Next Recommended Tasks:
-- EPIC-010: AST Analysis Engine (TASK-056 through TASK-061)
+- EPIC-011: Entity Extraction (TASK-062 through TASK-071)
+
+---
+
+## EPIC-010: AST Analysis Engine
+
+Date: 2026-06-13
+
+Completed Tasks:
+- TASK-056: Setup Babel parser (BabelParserService with @babel/parser for .js/.jsx/.mjs/.cjs/.ts/.tsx)
+- TASK-057: Setup TypeScript parser (TypeScriptParserService with TS Compiler API for .ts/.tsx/.mts/.cts)
+- TASK-058: Create AST abstraction layer (common AstNode, ParseResult, ParseError, AstParser interface)
+- TASK-059: Parse JavaScript files (BabelParserService with JSX support routes .js/.jsx/.mjs/.cjs)
+- TASK-060: Parse TypeScript files (TypeScriptParserService routes .ts/.tsx/.mts/.cts)
+- TASK-061: Handle parsing errors (try/catch per file, error location capture, continue processing)
+
+Files Created:
+- packages/analysis-engine/src/ast-parser/types.ts (AstNode, ParseResult, ParseError, AstParser interfaces)
+- packages/analysis-engine/src/ast-parser/BabelParserService.ts (@babel/parser wrapper with AST normalization)
+- packages/analysis-engine/src/ast-parser/TypeScriptParserService.ts (TS Compiler API wrapper with AST normalization)
+- packages/analysis-engine/src/ast-parser/AstParserService.ts (orchestrator: selects parser by file extension, parseAll batch)
+- packages/analysis-engine/src/ast-parser/index.ts (barrel export)
+- packages/analysis-engine/src/ast-parser/__tests__/BabelParserService.test.ts (18 tests)
+- packages/analysis-engine/src/ast-parser/__tests__/TypeScriptParserService.test.ts (15 tests)
+- packages/analysis-engine/src/ast-parser/__tests__/AstParserService.test.ts (15 tests)
+- packages/analysis-engine/src/ast-parser/__tests__/fixtures/sample.js
+- packages/analysis-engine/src/ast-parser/__tests__/fixtures/sample.jsx
+- packages/analysis-engine/src/ast-parser/__tests__/fixtures/sample.ts
+- packages/analysis-engine/src/ast-parser/__tests__/fixtures/sample.tsx
+- packages/analysis-engine/src/ast-parser/__tests__/fixtures/invalid.js
+
+Files Modified:
+- packages/analysis-engine/src/index.ts (added ast-parser module exports)
+- packages/analysis-engine/package.json (added @babel/parser, @babel/types, typescript as dependencies)
+- eslint.config.js (added fixtures directory to ignores for intentionally invalid test files)
+
+Dependencies Added:
+- @babel/parser ^7.26.0 (production, packages/analysis-engine)
+- @babel/types ^7.26.0 (production, packages/analysis-engine)
+- typescript ^5.7.0 (moved from devDeps to deps, packages/analysis-engine)
+
+Architectural Decisions:
+- AST abstraction layer defines common interface (AstNode, ParseResult, AstParser) that normalizes Babel and TS ASTs
+- BabelParserService uses errorRecovery: true for graceful failure on syntax errors
+- TypeScriptParserService uses createSourceFile for lightweight parsing (no program/type-checking overhead)
+- AstParserService orchestrator selects parser by file extension with fallback to last parser
+- Parser priority per ANALYSIS_PIPELINE.md: TS Compiler API for .ts/.tsx (priority 1), Babel for .js/.jsx (priority 2)
+- Both parsers expose identical AstParser interface — entity extractors (EPIC-011) can use either interchangeably
+- Error handling per spec: log error, mark failed, continue processing remaining files
+- AstNode.rawNode preserves original parser node for downstream advanced access
+- TypeScript parser uses toAstNode recursive visitor for consistent tree structure
+- Babel parser normalizes through property scanning (loc/comments excluded, child nodes discovered recursively)
+
+Known Risks:
+- Large .tsx files may parse more slowly through TS Compiler API than Babel — acceptable as TS API is preferred per spec
+- Babel parser typescript plugin may produce slightly different AST than TS Compiler API for complex TypeScript constructs
+- No incremental parsing — each file is parsed independently from scratch
+- AstNode.rawNode holding references to original parser nodes may cause memory pressure for large repositories
+- typescript as runtime dependency adds ~50MB to package size
+
+Verification Results:
+- TypeScript type check: PASSED
+- TypeScript build (tsc -b): PASSED (all 7 workspace projects)
+- ESLint: PASSED (no errors)
+- Prettier format check: PASSED
+- Analysis-engine tests: PASSED (115/115 tests across 11 test files — 48 new + 67 existing)
+- API tests: PASSED (27/27 tests across 5 test files)
+- Web build: PASSED (247 modules, 3 output files)
+
+Next Recommended Tasks:
 - EPIC-011: Entity Extraction (TASK-062 through TASK-071)
