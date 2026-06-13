@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs/promises';
-import simpleGit from 'simple-git';
+import { simpleGit } from 'simple-git';
 import { InternalError } from '../../utils/errors.js';
 
 export class GitCloneService {

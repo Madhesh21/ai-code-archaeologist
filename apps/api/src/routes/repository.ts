@@ -5,6 +5,9 @@ import { ZipExtractionService } from '../services/repository/ZipExtractionServic
 import { RepositoryValidationService } from '../services/repository/RepositoryValidationService.js';
 import { FileStorageService } from '../services/repository/FileStorageService.js';
 import { UploadService } from '../services/repository/UploadService.js';
+import { GitHubUrlValidationService } from '../services/repository/GitHubUrlValidationService.js';
+import { GitCloneService } from '../services/repository/GitCloneService.js';
+import { GitHubImportService } from '../services/repository/GitHubImportService.js';
 import { RepositoryRepository } from '../infrastructure/database/repositories/RepositoryRepository.js';
 import { env } from '../config/env.js';
 
@@ -26,6 +29,14 @@ const validation = new RepositoryValidationService();
 const storage = new FileStorageService(path.resolve(env.UPLOAD_DIR, 'repositories'));
 const repositoryRepo = new RepositoryRepository();
 const uploadService = new UploadService(zipExtraction, validation, storage, repositoryRepo);
+const gitHubUrlValidator = new GitHubUrlValidationService();
+const gitCloneService = new GitCloneService(path.resolve(env.UPLOAD_DIR, 'clones'));
+const gitHubImportService = new GitHubImportService(
+  gitHubUrlValidator,
+  gitCloneService,
+  storage,
+  repositoryRepo,
+);
 
 router.post('/repositories/upload', upload.single('file'), async (req, res, next) => {
   try {
@@ -74,6 +85,32 @@ router.get('/repositories/:id', async (req, res, next) => {
         status: repository.status,
         createdAt: repository.createdAt,
         updatedAt: repository.updatedAt,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/repositories/github', async (req, res, next) => {
+  try {
+    const { url } = req.body;
+
+    if (!url || typeof url !== 'string') {
+      res.status(400).json({
+        success: false,
+        error: { code: 'VALIDATION_ERROR', message: 'URL is required' },
+      });
+      return;
+    }
+
+    const result = await gitHubImportService.importFromGitHub(url);
+
+    res.status(201).json({
+      success: true,
+      data: {
+        repositoryId: result.repositoryId,
+        status: 'uploaded',
       },
     });
   } catch (error) {

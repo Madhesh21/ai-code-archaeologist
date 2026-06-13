@@ -4,7 +4,7 @@ import path from 'path';
 const mockClone = vi.fn();
 
 vi.mock('simple-git', () => ({
-  default: vi.fn(() => ({ clone: mockClone })),
+  simpleGit: vi.fn(() => ({ clone: mockClone })),
 }));
 
 vi.mock('fs/promises');
