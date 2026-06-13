@@ -50,6 +50,6 @@ export class AstParserService {
         return parser;
       }
     }
-    return this.parsers[this.parsers.length - 1];
+    throw new Error(`Unsupported file extension: ${filePath}`);
   }
 }

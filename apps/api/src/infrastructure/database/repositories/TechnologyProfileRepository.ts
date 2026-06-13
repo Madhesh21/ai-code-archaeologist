@@ -14,7 +14,7 @@ export class TechnologyProfileRepository extends MongoRepository<ITechnologyProf
 
   async upsert(
     repositoryId: string,
-    profile: Omit<ITechnologyProfile, 'repositoryId' | 'detectedAt'>,
+    profile: Omit<ITechnologyProfile, 'id' | 'repositoryId' | 'detectedAt'>,
   ): Promise<ITechnologyProfile> {
     const doc = await TechnologyProfileModel.findOneAndUpdate(
       { repositoryId },

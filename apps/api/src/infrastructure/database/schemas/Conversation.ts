@@ -17,9 +17,9 @@ const messageSchema = new Schema(
 const conversationSchema = new Schema(
   {
     repositoryId: {
-      type: Schema.Types.ObjectId,
-      ref: 'Repository',
+      type: String,
       required: true,
+      index: true,
     },
     messages: { type: [messageSchema], default: [] },
   },

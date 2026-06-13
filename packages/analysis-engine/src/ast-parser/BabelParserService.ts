@@ -127,7 +127,7 @@ export class BabelParserService implements AstParser {
       plugins.push('typescript');
     }
     if (ext === '.js' || ext === '.mjs' || ext === '.cjs') {
-      plugins.push('jsx');
+      // No jsx plugin for plain .js files
     }
 
     return plugins;

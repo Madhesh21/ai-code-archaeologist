@@ -78,7 +78,7 @@ router.get('/repositories/:id', async (req, res, next) => {
     res.json({
       success: true,
       data: {
-        id: (repository as unknown as Record<string, string>).id,
+        id: repository.id,
         name: repository.name,
         description: repository.description,
         sourceType: repository.sourceType,

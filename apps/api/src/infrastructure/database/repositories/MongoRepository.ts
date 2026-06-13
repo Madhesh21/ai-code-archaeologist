@@ -3,14 +3,14 @@ import { Repository } from './Repository.js';
 
 type DocumentRecord = Record<string, unknown>;
 
-export abstract class MongoRepository<T> extends Repository<T> {
+export abstract class MongoRepository<T extends { id: string }> extends Repository<T> {
   protected abstract getModel(): Model<T>;
 
   protected toEntity(doc: DocumentRecord | null): T | null {
     if (!doc) return null;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { _id, __v, ...rest } = doc;
-    return { id: String(_id), ...rest } as T;
+    return { id: String(_id), ...rest } as unknown as T;
   }
 
   async findById(id: string): Promise<T | null> {
@@ -20,10 +20,10 @@ export abstract class MongoRepository<T> extends Repository<T> {
 
   async findAll(): Promise<T[]> {
     const docs = await this.getModel().find().lean();
-    return docs.map((doc: DocumentRecord) => this.toEntity(doc) as T);
+    return docs.map((doc) => this.toEntity(doc)).filter((e): e is T => e !== null);
   }
 
-  async create(entity: T): Promise<T> {
+  async create(entity: Omit<T, 'id'>): Promise<T> {
     const doc = await this.getModel().create(entity);
     return this.toEntity(doc.toObject() as DocumentRecord) as T;
   }

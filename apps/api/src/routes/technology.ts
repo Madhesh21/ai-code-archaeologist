@@ -37,7 +37,7 @@ router.post('/repositories/:id/technology', async (req, res, next) => {
       throw new NotFoundError('Repository not found');
     }
 
-    const localPath = (repository as unknown as Record<string, string>).localPath;
+    const localPath = repository.localPath;
     if (!localPath) {
       throw new InternalError('Repository has no local path');
     }

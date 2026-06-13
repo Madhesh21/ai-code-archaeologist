@@ -39,9 +39,9 @@ export class UploadService {
         status: 'uploaded',
         createdAt: new Date(),
         updatedAt: new Date(),
-      } as IRepository);
+      });
 
-      const repositoryId = (repository as unknown as Record<string, string>).id;
+      const repositoryId = repository.id;
 
       const localPath = await this.storage.moveToStorage(extractDir, repositoryId);
 

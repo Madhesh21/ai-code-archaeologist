@@ -81,7 +81,7 @@ export class QueryService {
   async searchNodes(query: string, limit: number = 20): Promise<GraphNode[]> {
     const cypher = `
       MATCH (n)
-      WHERE n.name CONTAINS $query
+      WHERE toLower(n.name) CONTAINS toLower($query)
       RETURN n, labels(n) as labels
       LIMIT $limit
     `;

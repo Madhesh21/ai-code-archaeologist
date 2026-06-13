@@ -1,4 +1,5 @@
 import { Router, type Request, type Response } from 'express';
+import { mongoDatabase, neo4jClient } from '../infrastructure/database/databaseInstances.js';
 
 const router: Router = Router();
 
@@ -13,8 +14,8 @@ router.get('/ready', (_req: Request, res: Response) => {
   res.json({
     success: true,
     data: {
-      mongo: 'not_connected',
-      neo4j: 'not_connected',
+      mongo: mongoDatabase.isConnected() ? 'connected' : 'not_connected',
+      neo4j: neo4jClient.isConnected() ? 'connected' : 'not_connected',
       qdrant: 'not_connected',
     },
   });

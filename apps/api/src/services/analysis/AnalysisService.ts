@@ -23,7 +23,7 @@ export class AnalysisService {
       throw new NotFoundError('Repository not found');
     }
 
-    const localPath = (repository as unknown as Record<string, string>).localPath;
+    const localPath = repository.localPath;
     if (!localPath) {
       throw new InternalError('Repository has no local path');
     }
@@ -35,7 +35,7 @@ export class AnalysisService {
     try {
       const result = await this.scannerService.scan(localPath);
 
-      const tree: IRepositoryTree = {
+      const tree = {
         repositoryId,
         files: result.files,
         folders: result.folders,
@@ -72,7 +72,7 @@ export class AnalysisService {
       throw new NotFoundError('Repository not found');
     }
 
-    const localPath = (repository as unknown as Record<string, string>).localPath;
+    const localPath = repository.localPath;
     if (!localPath) {
       throw new InternalError('Repository has no local path');
     }

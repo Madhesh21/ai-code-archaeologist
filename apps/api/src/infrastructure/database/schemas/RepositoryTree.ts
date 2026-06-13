@@ -12,6 +12,7 @@ export interface IRepositoryTreeFolder {
 }
 
 export interface IRepositoryTree {
+  id: string;
   repositoryId: string;
   files: IRepositoryTreeFile[];
   folders: IRepositoryTreeFolder[];

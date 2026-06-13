@@ -1,4 +1,5 @@
 export interface IRepository {
+  id: string;
   name: string;
   description?: string;
   sourceType: 'upload' | 'github';
@@ -10,6 +11,7 @@ export interface IRepository {
     | 'scanning'
     | 'analyzing'
     | 'graph_building'
+    | 'embedding'
     | 'report_generating'
     | 'ready'
     | 'failed';
@@ -24,6 +26,7 @@ export interface IMessage {
 }
 
 export interface IAnalysis {
+  id: string;
   repositoryId: string;
   status: 'queued' | 'scanning' | 'parsing' | 'extracting' | 'building' | 'completed' | 'failed';
   report?: Record<string, unknown>;
@@ -32,6 +35,7 @@ export interface IAnalysis {
 }
 
 export interface IConversation {
+  id: string;
   repositoryId: string;
   messages: IMessage[];
   createdAt: Date;

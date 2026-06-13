@@ -9,7 +9,7 @@ export class RepositoryRepository extends MongoRepository<IRepository> {
 
   async findByStatus(status: IRepository['status']): Promise<IRepository[]> {
     const docs = await RepositoryModel.find({ status }).lean();
-    return docs.map((doc) => this.toEntity(doc as Record<string, unknown>) as IRepository);
+    return docs.map((doc) => this.toEntity(doc as Record<string, unknown>)).filter((e): e is IRepository => e !== null);
   }
 
   async findByName(name: string): Promise<IRepository | null> {

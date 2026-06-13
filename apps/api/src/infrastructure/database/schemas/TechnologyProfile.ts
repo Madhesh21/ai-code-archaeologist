@@ -1,6 +1,7 @@
 import { Schema, model } from 'mongoose';
 
 export interface ITechnologyProfile {
+  id: string;
   repositoryId: string;
   frontend: string[];
   backend: string[];

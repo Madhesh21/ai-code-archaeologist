@@ -27,9 +27,9 @@ export class GitHubImportService {
       status: 'pending',
       createdAt: new Date(),
       updatedAt: new Date(),
-    } as IRepository);
+    });
 
-    const repositoryId = (repository as unknown as Record<string, string>).id;
+    const repositoryId = repository.id;
 
     try {
       const cloneDir = await this.cloneService.clone(url, repositoryId);
