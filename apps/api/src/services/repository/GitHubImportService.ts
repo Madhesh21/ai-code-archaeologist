@@ -37,7 +37,7 @@ export class GitHubImportService {
       await this.repositoryRepo.update(repositoryId, { localPath } as Partial<IRepository>);
       await this.repositoryRepo.updateStatus(repositoryId, 'uploaded');
 
-      logger.info({ repositoryId, url: repoInfo }, 'Repository imported from GitHub');
+      logger.info({ repositoryId, repoInfo }, 'Repository imported from GitHub');
 
       return { repositoryId };
     } catch (error) {
