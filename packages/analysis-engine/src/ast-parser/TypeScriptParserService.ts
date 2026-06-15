@@ -6,8 +6,8 @@ function toAstNode(node: ts.Node, sourceFile: ts.SourceFile): AstNode {
   const end = sourceFile.getLineAndCharacterOfPosition(node.getEnd());
 
   const loc: SourceLocation = {
-    start: { line: start.line + 1, column: start.character + 1 },
-    end: { line: end.line + 1, column: end.character + 1 },
+    start: { line: start.line + 1, column: start.character },
+    end: { line: end.line + 1, column: end.character },
   };
 
   const children: AstNode[] = [];

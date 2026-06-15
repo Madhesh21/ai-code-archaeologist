@@ -10,3 +10,7 @@ export type {
 } from './RepositoryTree.js';
 export { TechnologyProfileModel } from './TechnologyProfile.js';
 export type { ITechnologyProfile } from './TechnologyProfile.js';
+export { EntityDefinitionModel } from './EntityDefinition.js';
+export type { IEntityDefinition, EntityType } from './EntityDefinition.js';
+export { RelationshipModel } from './Relationship.js';
+export type { IRelationship } from './Relationship.js';

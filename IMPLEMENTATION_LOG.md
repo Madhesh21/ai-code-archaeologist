@@ -786,5 +786,239 @@ Verification Results:
 - API tests: PASSED (27/27 tests across 5 test files)
 - Web build: PASSED (247 modules, 3 output files)
 
-Next Recommended Tasks:
-- EPIC-011: Entity Extraction (TASK-062 through TASK-071)
+---
+
+## EPIC-011: Entity Extraction
+
+Date: 2026-06-14
+
+Completed Tasks:
+- TASK-062: Create entity types (ExtractedEntity, EntityType, ExtractorOptions, EntityExtractor interface)
+- TASK-063: Create SourceHelper (getNodeText, findChildByType — type-safe AST traversal utilities)
+- TASK-064: Implement FunctionExtractor (FunctionDeclaration, FunctionExpression, MethodDeclaration, arrow function assignments)
+- TASK-065: Implement ClassExtractor (ClassDeclaration with heritage clause, methods, parent class, interfaces)
+- TASK-066: Implement InterfaceExtractor (TSInterfaceDeclaration/InterfaceDeclaration, TypeAliasDeclaration, EnumDeclaration)
+- TASK-067: Implement RouteExtractor (Express route patterns: app.get/post/put/delete, Router.route)
+- TASK-068: Implement MiddlewareExtractor (app.use, express.json, cors, morgan patterns)
+- TASK-069: Implement ModelExtractor (Mongoose model definitions, Schema creation)
+- TASK-070: Implement ServiceExtractor (class-based services, exported service-like objects)
+- TASK-071: Create EntityExtractorService (orchestrator: run all extractors per file, collect imports/exports)
+- ComponentExtractor (function components returning JSX, arrow function components, PAGE vs UI classification)
+- HookExtractor (use-prefixed function declarations and arrow functions)
+- ImportExportCollector (collectImports/collectExports from AST with ImportClause/NamedImports handling)
+
+Files Created:
+- packages/analysis-engine/src/entity-extractor/types.ts
+- packages/analysis-engine/src/entity-extractor/SourceHelper.ts
+- packages/analysis-engine/src/entity-extractor/FunctionExtractor.ts
+- packages/analysis-engine/src/entity-extractor/ClassExtractor.ts
+- packages/analysis-engine/src/entity-extractor/InterfaceExtractor.ts
+- packages/analysis-engine/src/entity-extractor/RouteExtractor.ts
+- packages/analysis-engine/src/entity-extractor/MiddlewareExtractor.ts
+- packages/analysis-engine/src/entity-extractor/ModelExtractor.ts
+- packages/analysis-engine/src/entity-extractor/ServiceExtractor.ts
+- packages/analysis-engine/src/entity-extractor/ComponentExtractor.ts
+- packages/analysis-engine/src/entity-extractor/HookExtractor.ts
+- packages/analysis-engine/src/entity-extractor/ImportExportCollector.ts
+- packages/analysis-engine/src/entity-extractor/EntityExtractorService.ts
+- packages/analysis-engine/src/entity-extractor/index.ts
+- packages/analysis-engine/src/entity-extractor/__tests__/FunctionExtractor.test.ts (5 tests)
+- packages/analysis-engine/src/entity-extractor/__tests__/ClassExtractor.test.ts (5 tests)
+- packages/analysis-engine/src/entity-extractor/__tests__/InterfaceExtractor.test.ts (5 tests)
+- packages/analysis-engine/src/entity-extractor/__tests__/RouteExtractor.test.ts (4 tests)
+- packages/analysis-engine/src/entity-extractor/__tests__/MiddlewareExtractor.test.ts (3 tests)
+- packages/analysis-engine/src/entity-extractor/__tests__/ModelExtractor.test.ts (3 tests)
+- packages/analysis-engine/src/entity-extractor/__tests__/ServiceExtractor.test.ts (4 tests)
+- packages/analysis-engine/src/entity-extractor/__tests__/ComponentExtractor.test.ts (5 tests)
+- packages/analysis-engine/src/entity-extractor/__tests__/HookExtractor.test.ts (4 tests)
+- packages/analysis-engine/src/entity-extractor/__tests__/EntityExtractorService.test.ts (5 tests)
+- packages/analysis-engine/src/entity-extractor/__tests__/fixtures/sample.js
+- packages/analysis-engine/src/entity-extractor/__tests__/fixtures/sample.ts
+- packages/analysis-engine/src/entity-extractor/__tests__/fixtures/complex-sample.ts
+
+Files Modified:
+- packages/analysis-engine/src/index.ts (added entity-extractor module exports)
+
+Architectural Decisions:
+- ExtractorOptions carries all context (ast, content, repositoryId, fileId, filePath) to each extractor
+- Each extractor implements EntityExtractor interface for pluggable architecture
+- generateEntityId / generateRelationshipId utility functions for deterministic ID creation
+- Arrow function detection handles both Babel (ArrowFunctionExpression) and TypeScript (ArrowFunction) AST conventions
+- Component vs PAGE classification based on isExported metadata
+- Route patterns support app.get/post/put/delete and Router.get/post/put/delete
+- Service detection supports class-based (Service/Repository suffixes) and export-based patterns
+- ModelExtractor detects Mongoose model definitions via .model() calls
+
+Known Risks:
+- Arrow function name extraction depends on VariableDeclarator patterns which differ between Babel and TypeScript parsers
+- Route and middleware detection is pattern-based (call expression matching), not exhaustive
+- Model extraction requires further enhancement for other ORMs (Prisma, TypeORM)
+
+Verification Results:
+- TypeScript build: PASSED
+- Analysis-engine tests: PASSED (43 tests across 10 test files)
+
+---
+
+## EPIC-012: Relationship Extraction
+
+Date: 2026-06-14
+
+Completed Tasks:
+- Implement CallRelationshipExtractor (detects function call invocations between entities)
+- Implement ImportRelationshipExtractor (detects import relationships between files)
+- Implement ExtendsImplRelationshipExtractor (class extends/implements, interface extends)
+- Implement UsesRelationshipExtractor (TypeScript type references via TSTypeReference/TypeReference)
+- Implement DependsOnRelationshipExtractor (external package dependencies from imports)
+- Implement ReadsWriteRelationshipExtractor (read/write operations from call patterns)
+- Create RelationshipExtractorService (orchestrator running all 6 extractors per file)
+
+Files Created:
+- packages/analysis-engine/src/relationship-extractor/CallRelationshipExtractor.ts
+- packages/analysis-engine/src/relationship-extractor/ImportRelationshipExtractor.ts
+- packages/analysis-engine/src/relationship-extractor/ExtendsImplRelationshipExtractor.ts
+- packages/analysis-engine/src/relationship-extractor/UsesRelationshipExtractor.ts
+- packages/analysis-engine/src/relationship-extractor/DependsOnRelationshipExtractor.ts
+- packages/analysis-engine/src/relationship-extractor/ReadsWriteRelationshipExtractor.ts
+- packages/analysis-engine/src/relationship-extractor/RelationshipExtractorService.ts
+- packages/analysis-engine/src/relationship-extractor/types.ts
+- packages/analysis-engine/src/relationship-extractor/index.ts
+- packages/analysis-engine/src/relationship-extractor/__tests__/CallRelationshipExtractor.test.ts (5 tests)
+- packages/analysis-engine/src/relationship-extractor/__tests__/ImportRelationshipExtractor.test.ts (6 tests)
+- packages/analysis-engine/src/relationship-extractor/__tests__/ExtendsImplRelationshipExtractor.test.ts (6 tests)
+- packages/analysis-engine/src/relationship-extractor/__tests__/UsesRelationshipExtractor.test.ts (4 tests)
+- packages/analysis-engine/src/relationship-extractor/__tests__/DependsOnRelationshipExtractor.test.ts (6 tests)
+- packages/analysis-engine/src/relationship-extractor/__tests__/ReadsWriteRelationshipExtractor.test.ts (6 tests)
+- packages/analysis-engine/src/relationship-extractor/__tests__/RelationshipExtractorService.test.ts (7 tests)
+- apps/api/src/infrastructure/database/schemas/Relationship.ts
+- apps/api/src/infrastructure/database/repositories/RelationshipRepository.ts
+- apps/api/src/services/analysis/RelationshipExtractionService.ts
+- apps/api/src/routes/relationships.ts
+
+Files Modified:
+- packages/analysis-engine/src/index.ts (added relationship-extractor module exports)
+- apps/api/src/infrastructure/database/schemas/index.ts (added Relationship exports)
+- apps/api/src/infrastructure/database/repositories/index.ts (added RelationshipRepository export)
+- apps/api/src/services/analysis/index.ts (added RelationshipExtractionService export)
+- apps/api/src/routes/index.ts (registered relationshipsRouter)
+
+Architectural Decisions:
+- 6 extractors cover all relationship types per GRAPH_SCHEMA.md (CALLS, IMPORTS, EXTENDS, IMPLEMENTS, USES, DEPENDS_ON, READS, WRITES)
+- DEPENDS_ON only targets external packages (excludes relative, absolute, and node: imports)
+- READS/WRITES use pattern matching on call names (readFile, writeFile, fetch, save, etc.)
+- USES detected via TSTypeReference/TypeReference AST nodes for TypeScript type usage
+- All extractors handle both Babel and TypeScript AST node naming conventions
+- API-level RelationshipExtractionService orchestrates parse → entity lookup → extraction → persistence
+
+Known Risks:
+- USES detection limited to TSTypeReference — static type analysis (type declarations in .d.ts) not covered
+- READS/WRITES pattern matching may miss custom read/write wrappers
+- File-level extractors operate independently — cross-file relationship linking deferred to graph stage
+
+Verification Results:
+- TypeScript build: PASSED
+- Analysis-engine tests: PASSED (40 tests across 7 test files)
+
+---
+
+## EPIC-013: Knowledge Graph (Graph Building)
+
+Date: 2026-06-14
+
+Completed Tasks:
+- Implement GraphBuilderService (builds Neo4j graph from extracted entities and relationships)
+- Wire graph route to call GraphBuilderService with NodeService, RelationshipService, Neo4jClient
+
+Files Created:
+- apps/api/src/routes/graph.ts (rewritten — calls GraphBuilderService with real entity/relationship data)
+
+Files Modified:
+- apps/api/src/infrastructure/graph/Neo4jClient.ts (edgeCount tracking in relationship creation)
+
+Architectural Decisions:
+- GraphBuilderService maps entities to Neo4j nodes and relationships to Neo4j edges
+- Neo4jClient connect/disconnect handled in route handler
+- buildGraph receives repositoryId, entities[], relationships[] and returns { nodeCount, edgeCount }
+
+Known Risks:
+- Requires Neo4j running — graph build fails without connection
+- No incremental graph updates (full rebuild on each pipeline run)
+
+Verification Results:
+- TypeScript build: PASSED
+
+---
+
+## EPIC-014: Architecture Report + Pipeline
+
+Date: 2026-06-14
+
+Completed Tasks:
+- Implement ReportGeneratorService (ArchitectureReport: summary, tech, API inventory, models, entities, relationships, dependencies)
+- Create AnalysisPipelineService (orchestrator: scan → tech → entities → relationships → graph → report)
+- Create pipeline endpoint (POST /repositories/:id/pipeline)
+
+Files Created:
+- apps/api/src/services/analysis/ReportGeneratorService.ts
+- apps/api/src/services/analysis/AnalysisPipelineService.ts
+- apps/api/src/services/analysis/__tests__/AnalysisPipelineService.test.ts (6 integration tests)
+- apps/api/src/routes/__tests__/analysis.test.ts (2 route tests)
+
+Files Modified:
+- apps/api/src/routes/analysis.ts (added pipeline endpoint with Neo4j lazy-connect)
+- apps/api/src/services/analysis/index.ts (added AnalysisPipelineService, ReportGeneratorService exports)
+
+Architectural Decisions:
+- Pipeline chains 6 stages in strict order per ANALYSIS_PIPELINE.md
+- Each stage wrapped in try/catch — failures logged but pipeline continues (except scan failure = abort)
+- PipelineResult includes per-stage status and collected error messages
+- ReportGeneratorService produces comprehensive JSON report combining all analysis data
+
+Known Risks:
+- Pipeline may produce partial results if stages fail — consumers must check per-stage status
+
+Verification Results:
+- TypeScript build: PASSED
+- API tests: PASSED (37/37 tests across 8 test files)
+
+---
+
+## EPIC-011/012 Enhancement: TypeScript AST Compatibility Fix
+
+Date: 2026-06-15
+
+Completed Tasks:
+- Fixed arrow function detection for TypeScript AST (VariableDeclarationList > VariableDeclaration > ArrowFunction structure)
+- Fixed export detection for TypeScript AST (ExportKeyword child on declarations, FirstStatement wrapping for export const)
+- Fixed heritage clause parsing for TypeScript AST (ExpressionWithTypeArguments nesting inside HeritageClause)
+- Fixed source content bug (getNodeText(id, '') → getNodeText(id, source) across all extractors)
+- Fixed ReadsWriteRelationshipExtractor to skip when no containing entity found
+- Fixed ImportExportCollector.collectExports for TypeScript AST export patterns
+- Exported collectImports/collectExports from @archaeologist/analysis-engine package
+- Fixed AnalysisPipelineService type annotation (PipelineResult['stages'] for object literal extra properties)
+
+Files Modified:
+- packages/analysis-engine/src/entity-extractor/FunctionExtractor.ts
+- packages/analysis-engine/src/entity-extractor/ComponentExtractor.ts
+- packages/analysis-engine/src/entity-extractor/HookExtractor.ts
+- packages/analysis-engine/src/entity-extractor/ClassExtractor.ts
+- packages/analysis-engine/src/entity-extractor/InterfaceExtractor.ts
+- packages/analysis-engine/src/entity-extractor/ServiceExtractor.ts
+- packages/analysis-engine/src/entity-extractor/ImportExportCollector.ts
+- packages/analysis-engine/src/relationship-extractor/ReadsWriteRelationshipExtractor.ts
+- packages/analysis-engine/src/relationship-extractor/__tests__/RelationshipExtractorService.test.ts
+- packages/analysis-engine/src/relationship-extractor/__tests__/DependsOnRelationshipExtractor.test.ts
+- packages/analysis-engine/src/index.ts (added collectImports/collectExports exports)
+- apps/api/src/services/analysis/AnalysisPipelineService.ts (stage type annotation)
+
+Architectural Decisions:
+- TypeScript AST differs from Babel: VariableDeclarationList wraps declarations, ExportKeyword is a child node (not wrapper), HeritageClause uses ExpressionWithTypeArguments
+- All extractors now handle both parser conventions to maintain dual-parser compatibility per ANALYSIS_PIPELINE.md
+
+Verification Results:
+- TypeScript build (analysis-engine): PASSED
+- TypeScript type check (api): PASSED
+- Analysis-engine tests: PASSED (198/198 tests across 28 test files)
+- API tests: PASSED (37/37 tests across 8 test files)
+
+---

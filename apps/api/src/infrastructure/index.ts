@@ -26,6 +26,9 @@ export { RepositoryTreeRepository } from './database/repositories/RepositoryTree
 export { TechnologyProfileRepository } from './database/repositories/TechnologyProfileRepository.js';
 export { TechnologyProfileModel } from './database/schemas/TechnologyProfile.js';
 export type { ITechnologyProfile } from './database/schemas/TechnologyProfile.js';
+export { EntityDefinitionRepository } from './database/repositories/EntityDefinitionRepository.js';
+export { EntityDefinitionModel } from './database/schemas/EntityDefinition.js';
+export type { IEntityDefinition, EntityType } from './database/schemas/EntityDefinition.js';
 export { GraphClient } from './graph/GraphClient.js';
 export { Neo4jClient } from './graph/Neo4jClient.js';
 export { NodeService } from './graph/services/NodeService.js';

@@ -22,7 +22,7 @@ export interface IRepositoryTree {
 const repositoryTreeFileSchema = new Schema<IRepositoryTreeFile>(
   {
     path: { type: String, required: true },
-    extension: { type: String, required: true },
+    extension: { type: String, default: '' },
     size: { type: Number, required: true },
     hash: { type: String, required: true },
   },

@@ -6,5 +6,9 @@
     "types": ["node"]
   },
   "include": ["src"],
-  "references": [{ "path": "../../packages/shared" }, { "path": "../../packages/analysis-engine" }]
+  "references": [
+    { "path": "../../packages/shared" },
+    { "path": "../../packages/analysis-engine" },
+    { "path": "../../packages/graph-engine" }
+  ]
 }

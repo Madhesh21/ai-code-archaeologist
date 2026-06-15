@@ -54,16 +54,11 @@ You must follow these principles:
 
 EPIC:
 
-EPIC-010: AST Analysis Engine
+EPIC-011: Entity Extraction - EPIC-014: Architecture Report 
 
 Tasks:
 
-TASK - 056
-TASK - 057
-TASK - 058
-TASK - 059
-TASK - 060
-TASK - 061
+TASKS : 062 - 91
 
 ---
 

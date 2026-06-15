@@ -1,4 +1,5 @@
 import { useState, useRef, type ChangeEvent, type FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface UploadState {
   status: 'idle' | 'uploading' | 'success' | 'error';
@@ -7,6 +8,7 @@ interface UploadState {
 }
 
 export default function RepositoryUpload() {
+  const navigate = useNavigate();
   const [githubUrl, setGithubUrl] = useState('');
   const [dragOver, setDragOver] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -50,10 +52,12 @@ export default function RepositoryUpload() {
         throw new Error(body.error?.message || 'Upload failed');
       }
 
+      const repositoryId: string = body.data.repositoryId;
       setUploadState({
         status: 'success',
-        repositoryId: body.data.repositoryId,
+        repositoryId,
       });
+      navigate(`/repositories/${repositoryId}`);
     } catch (err) {
       setUploadState({
         status: 'error',

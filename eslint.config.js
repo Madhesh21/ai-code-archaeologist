@@ -7,7 +7,7 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   eslintConfigPrettier,
   {
-    ignores: ['**/dist/**', '**/node_modules/**', '**/.git/**', '**/__tests__/fixtures/**'],
+    ignores: ['**/dist/**', '**/node_modules/**', '**/.git/**', '**/__tests__/fixtures/**', '**/uploads/**', '**/debug.mjs'],
   },
   {
     rules: {
