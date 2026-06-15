@@ -1022,3 +1022,237 @@ Verification Results:
 - API tests: PASSED (37/37 tests across 8 test files)
 
 ---
+
+## EPIC-015: Search Engine
+
+Status: COMPLETED
+
+### TASK-092
+
+Setup Qdrant:
+
+* QdrantVectorClient using REST API
+* 768-dimension vectors, cosine distance
+* Collection management
+
+### TASK-093
+
+Create embedding service:
+
+* EmbeddingService wrapping Ollama (nomic-embed-text)
+* Single and batch embedding
+* Delete and ensure collection operations
+
+### TASK-094
+
+Embed functions:
+
+* Function-level embeddings generated
+
+### TASK-095
+
+Embed classes:
+
+* Class-level embeddings generated
+
+### TASK-096
+
+Embed APIs:
+
+* API entity embeddings generated
+
+### TASK-097
+
+Implement semantic search:
+
+* SemanticSearchService using Qdrant point search
+* Score-based result ranking
+
+### TASK-098
+
+Implement hybrid retrieval:
+
+* SearchService with 60/40 graph/semantic fusion
+* Deduplication and ranking
+
+Test count: 8 tests (2 test files)
+- EmbeddingService: 6 tests (single/batch/empty/delete/ensure)
+- SearchService: 3 tests (semantic, hybrid fusion, dedup)
+
+---
+
+## EPIC-016: Flow Reconstruction
+
+Status: COMPLETED
+
+### TASK-099
+
+Implement route tracing:
+
+* BFS from Route nodes via CALLS|USES|IMPORTS|EXPOSES
+
+### TASK-100
+
+Implement controller tracing:
+
+* Controller node BFS traversal
+
+### TASK-101
+
+Implement service tracing:
+
+* Service node BFS traversal
+
+### TASK-102
+
+Implement model tracing:
+
+* Model node BFS traversal
+
+### TASK-103
+
+Build execution path generator:
+
+* FlowReconstructionService
+* Max depth 15
+* Auto-detection of flow entry points
+
+### TASK-104
+
+Generate flow JSON:
+
+* Named flows with step sequences
+* Flow listing endpoint support
+
+Test count: 5 tests (1 test file)
+- Flow generation, max depth, not-found, list, error-skip
+
+---
+
+## EPIC-017: AI Layer
+
+Status: COMPLETED
+
+### TASK-105
+
+Create context builder:
+
+* ContextBuilder merges graph + semantic + technology context
+
+### TASK-106
+
+Create graph retriever:
+
+* GraphRetriever with intent-specific Cypher queries
+* Intents: ARCHITECTURE, FLOW_EXPLANATION, DEPENDENCY, LOCATION, TECHNOLOGY, IMPACT_ANALYSIS, GENERAL
+
+### TASK-107
+
+Create semantic retriever:
+
+* SemanticRetriever wrapping SearchService
+* Ranked semantic results
+
+### TASK-108
+
+Merge retrieval results:
+
+* Context fusion in ContextBuilder
+
+### TASK-109
+
+Implement prompt templates:
+
+* PromptBuilder with system and user prompt construction
+* Evidence rules, no-hallucination constraints
+* Source attribution
+
+### TASK-110
+
+Implement answer generation:
+
+* AnswerGenerator via Ollama LLM
+* Chat response with source extraction
+* Streaming support
+
+Test count: 9 tests (3 test files)
+- IntentDetector: 8 tests (all intents + confidence + entity extraction)
+- GraphRetriever: 6 tests (architecture/dependency/flow/impact/technology/general)
+- PromptBuilder: 7 tests (system/user prompt, relationships, semantic scores, flow evidence, no-evidence note, hallucination rule)
+
+---
+
+## EPIC-018: Chat System
+
+Status: COMPLETED
+
+### TASK-111
+
+Create chat endpoint:
+
+* POST /repositories/{repositoryId}/chat
+* Conversation CRUD endpoints
+
+### TASK-112
+
+Persist conversations:
+
+* MongoDB Conversation schema
+* Message history with roles
+
+### TASK-113
+
+Implement repository context injection:
+
+* ChatService orchestrates IntentDetector → GraphRetriever → SemanticRetriever → ContextBuilder → PromptBuilder → AnswerGenerator
+
+### TASK-114
+
+Implement streaming responses:
+
+* GET /repositories/{repositoryId}/chat/stream (SSE)
+* Real-time token streaming via Ollama
+
+Key architectural decisions:
+- GraphRetriever uses neo4jClient.query() directly (not QueryService, which lacks a generic query method)
+- ChatService receives neo4jClient and queryService as separate dependencies
+
+Test count: 37 tests (apps/api)
+- Analysis pipeline: 6 tests (8-stage execution, scan reporting, error handling)
+- Routes: 4 tests
+- Repository services: 27 tests
+
+---
+
+## Summary
+
+| EPIC | Title                   | Status    | Tests                 |
+| ---- | ----------------------- | --------- | --------------------- |
+| 001  | Monorepo Initialization | COMPLETED | -                     |
+| 002  | React Application       | COMPLETED | -                     |
+| 003  | API Service             | COMPLETED | -                     |
+| 004  | MongoDB                 | COMPLETED | -                     |
+| 005  | Graph Database          | COMPLETED | -                     |
+| 006  | Repository Upload       | COMPLETED | -                     |
+| 007  | GitHub Import           | COMPLETED | -                     |
+| 008  | Repository Scanner      | COMPLETED | -                     |
+| 009  | Technology Detection    | COMPLETED | -                     |
+| 010  | AST Analysis Engine     | COMPLETED | 198 (analysis-engine) |
+| 011  | Entity Extraction       | COMPLETED | (included above)      |
+| 012  | Relationship Extraction | COMPLETED | (included above)      |
+| 013  | Knowledge Graph         | COMPLETED | -                     |
+| 014  | Architecture Report     | COMPLETED | -                     |
+| 015  | Search Engine           | COMPLETED | 8 (search-engine)     |
+| 016  | Flow Reconstruction     | COMPLETED | 5 (graph-engine)      |
+| 017  | AI Layer                | COMPLETED | 9 (ai-engine)         |
+| 018  | Chat System             | COMPLETED | 37 (apps/api)         |
+
+Total tests passing: 248
+
+**Remaining EPICs:**
+- EPIC-019: Graph Explorer (frontend) — TASKS 115-120
+- EPIC-020: Flow Explorer (frontend) — TASKS 121-124
+- EPIC-021: Archaeological Report UI — TASKS 125-129
+- EPIC-022: Additional Testing — TASKS 130-136
+- EPIC-023: Docker/Deployment — TASKS 137-142
+- EPIC-024: MVP End-to-End Validation — TASKS 143-150

@@ -39,3 +39,7 @@ export { QueryService } from './graph/services/QueryService.js';
 export type { Subgraph, GraphPath } from './graph/services/QueryService.js';
 export { VectorClient } from './search/VectorClient.js';
 export { AiClient } from './ai/AiClient.js';
+export { OllamaAiClient } from './ai/OllamaAiClient.js';
+export { FlowRepository } from './database/repositories/FlowRepository.js';
+export { FlowModel } from './database/schemas/Flow.js';
+export type { IFlow, IFlowStep } from './database/schemas/interfaces.js';

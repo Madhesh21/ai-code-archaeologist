@@ -41,3 +41,22 @@ export interface IConversation {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface IFlowStep {
+  nodeId: string;
+  nodeName: string;
+  nodeType: string;
+  filePath?: string;
+  details?: Record<string, unknown>;
+}
+
+export interface IFlow {
+  id: string;
+  repositoryId: string;
+  name: string;
+  startNode: string;
+  steps: IFlowStep[];
+  generatedAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}

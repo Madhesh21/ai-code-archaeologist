@@ -1,14 +1,18 @@
 import type { ScanResult } from '@archaeologist/analysis-engine';
 import { ScannerService, IgnoreRules, TechnologyDetectorService, AstParserService, EntityExtractorService, RelationshipExtractorService } from '@archaeologist/analysis-engine';
-import { GraphBuilderService } from '@archaeologist/graph-engine';
+import { GraphBuilderService, FlowReconstructionService } from '@archaeologist/graph-engine';
+import { EmbeddingService } from '@archaeologist/search-engine';
+import { QdrantVectorClient } from '@archaeologist/search-engine';
 import type { RepositoryRepository } from '../../infrastructure/database/repositories/RepositoryRepository.js';
 import type { RepositoryTreeRepository } from '../../infrastructure/database/repositories/RepositoryTreeRepository.js';
 import type { EntityDefinitionRepository } from '../../infrastructure/database/repositories/EntityDefinitionRepository.js';
 import type { RelationshipRepository } from '../../infrastructure/database/repositories/RelationshipRepository.js';
 import type { AnalysisRepository } from '../../infrastructure/database/repositories/AnalysisRepository.js';
+import type { FlowRepository } from '../../infrastructure/database/repositories/FlowRepository.js';
 import type { Neo4jClient } from '../../infrastructure/graph/Neo4jClient.js';
 import { NodeService } from '../../infrastructure/graph/services/NodeService.js';
 import { RelationshipService } from '../../infrastructure/graph/services/RelationshipService.js';
+import { OllamaAiClient } from '../../infrastructure/ai/OllamaAiClient.js';
 import { EntityExtractionService } from './EntityExtractionService.js';
 import { RelationshipExtractionService } from './RelationshipExtractionService.js';
 import { ReportGeneratorService } from './ReportGeneratorService.js';
@@ -26,6 +30,8 @@ export interface PipelineResult {
     entities: { status: string; totalEntities?: number };
     relationships: { status: string; totalRelationships?: number };
     graph: { status: string; nodeCount?: number; edgeCount?: number };
+    embedding: { status: string; embeddedCount?: number };
+    flow: { status: string; flowCount?: number };
     report: { status: string };
   };
   errors: string[];
@@ -39,6 +45,7 @@ export class AnalysisPipelineService {
     private readonly relationshipRepo: RelationshipRepository,
     private readonly analysisRepo: AnalysisRepository,
     private readonly neo4jClient: Neo4jClient,
+    private readonly flowRepo?: FlowRepository,
     private readonly technologyDetector?: TechnologyDetectorService,
   ) {}
 
@@ -60,6 +67,8 @@ export class AnalysisPipelineService {
       entities: { status: 'pending' },
       relationships: { status: 'pending' },
       graph: { status: 'pending' },
+      embedding: { status: 'pending' },
+      flow: { status: 'pending' },
       report: { status: 'pending' },
     };
 
@@ -100,6 +109,22 @@ export class AnalysisPipelineService {
     } catch (err) {
       stages.graph = { status: 'failed' };
       errors.push(`Graph building failed: ${err instanceof Error ? err.message : String(err)}`);
+    }
+
+    try {
+      const embedResult = await this.runEmbeddingGeneration(repositoryId);
+      stages.embedding = { status: 'completed', embeddedCount: embedResult };
+    } catch (err) {
+      stages.embedding = { status: 'failed' };
+      errors.push(`Embedding generation failed: ${err instanceof Error ? err.message : String(err)}`);
+    }
+
+    try {
+      const flowResult = await this.runFlowReconstruction(repositoryId);
+      stages.flow = { status: 'completed', flowCount: flowResult };
+    } catch (err) {
+      stages.flow = { status: 'failed' };
+      errors.push(`Flow reconstruction failed: ${err instanceof Error ? err.message : String(err)}`);
     }
 
     try {
@@ -225,6 +250,115 @@ export class AnalysisPipelineService {
     });
 
     return { nodeCount: result.nodeCount, edgeCount: result.edgeCount };
+  }
+
+  private async runEmbeddingGeneration(repositoryId: string): Promise<number> {
+    await this.repositoryRepo.updateStatus(repositoryId, 'embedding');
+
+    const entityDefs = await this.entityDefRepo.findByRepositoryId(repositoryId);
+
+    const embeddableTypes = ['FUNCTION', 'CLASS', 'API_ROUTE', 'SERVICE', 'COMPONENT'];
+    const embeddable = entityDefs.filter((e) => embeddableTypes.includes(e.type));
+
+    if (embeddable.length === 0) {
+      logger.info({ repositoryId }, 'No embeddable entities found');
+      return 0;
+    }
+
+    const ollamaClient = new OllamaAiClient();
+    const vectorClient = new QdrantVectorClient();
+    const embeddingService = new EmbeddingService(ollamaClient, vectorClient);
+
+    await embeddingService.ensureCollection();
+
+    const payloads = embeddable.map((e) => {
+      const meta = e.metadata as Record<string, unknown> | undefined;
+      let content = e.name;
+
+      if (e.type === 'API_ROUTE') {
+        const method = (meta?.method as string) ?? 'GET';
+        const path = (meta?.path as string) ?? '/';
+        content = `${method} ${path}`;
+      } else if (e.type === 'CLASS') {
+        content = `Class ${e.name}`;
+      } else if (e.type === 'SERVICE') {
+        content = `${e.name} Service`;
+      }
+
+      return {
+        entityId: e.id,
+        entityType: e.type,
+        entityName: e.name,
+        filePath: e.filePath,
+        repositoryId: e.repositoryId,
+        content,
+      };
+    });
+
+    await embeddingService.embedEntities(payloads);
+
+    logger.info({ repositoryId, count: payloads.length }, 'Embeddings generated');
+
+    return payloads.length;
+  }
+
+  private async runFlowReconstruction(repositoryId: string): Promise<number> {
+    const routes = await this.entityDefRepo.findByRepositoryId(repositoryId);
+
+    const flowCandidates = routes.filter((r) =>
+      ['API_ROUTE', 'FUNCTION', 'SERVICE'].includes(r.type),
+    );
+
+    if (flowCandidates.length === 0) {
+      logger.info({ repositoryId }, 'No flow candidates found');
+      return 0;
+    }
+
+    if (!this.flowRepo) {
+      logger.warn({ repositoryId }, 'Flow repository not available, skipping flow reconstruction');
+      return 0;
+    }
+
+    if (!this.neo4jClient.isConnected()) {
+      logger.warn({ repositoryId }, 'Neo4j not connected, skipping flow reconstruction');
+      return 0;
+    }
+
+    const flowService = new FlowReconstructionService(this.neo4jClient);
+
+    const topCandidates = flowCandidates.slice(0, 10);
+    let flowCount = 0;
+
+    for (const candidate of topCandidates) {
+      try {
+        const flow = await flowService.generateFlow(repositoryId, candidate.name);
+
+        const existing = await this.flowRepo.findByName(repositoryId, flow.name);
+        if (!existing) {
+          await this.flowRepo.create({
+            repositoryId,
+            name: flow.name,
+            startNode: flow.startNode,
+            steps: flow.steps.map((s) => ({
+              nodeId: s.nodeId,
+              nodeName: s.nodeName,
+              nodeType: s.nodeType,
+              filePath: s.filePath,
+              details: s.details,
+            })),
+            generatedAt: new Date(flow.generatedAt),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          });
+          flowCount++;
+        }
+      } catch (err) {
+        logger.warn({ repositoryId, candidate: candidate.name, err }, 'Flow generation failed for candidate');
+      }
+    }
+
+    logger.info({ repositoryId, flowCount }, 'Flow reconstruction completed');
+    return flowCount;
   }
 
   private async runReportGeneration(repositoryId: string): Promise<void> {

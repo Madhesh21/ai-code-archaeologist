@@ -15,6 +15,43 @@ vi.mock('@archaeologist/graph-engine', () => ({
       buildGraph: vi.fn().mockResolvedValue({ nodeCount: 3, edgeCount: 2 }),
     };
   }),
+  FlowReconstructionService: vi.fn().mockImplementation(function () {
+    return {
+      generateFlow: vi.fn().mockRejectedValue(new Error('No flow')),
+      listFlows: vi.fn().mockResolvedValue([]),
+    };
+  }),
+}));
+
+vi.mock('@archaeologist/search-engine', () => ({
+  EmbeddingService: vi.fn().mockImplementation(function () {
+    return {
+      ensureCollection: vi.fn().mockResolvedValue(undefined),
+      embedEntity: vi.fn().mockResolvedValue(undefined),
+      embedEntities: vi.fn().mockResolvedValue(undefined),
+      deleteEntityEmbeddings: vi.fn().mockResolvedValue(undefined),
+    };
+  }),
+  QdrantVectorClient: vi.fn().mockImplementation(function () {
+    return {
+      ensureCollection: vi.fn().mockResolvedValue(undefined),
+      upsert: vi.fn().mockResolvedValue(undefined),
+      search: vi.fn().mockResolvedValue([]),
+      deleteByRepositoryId: vi.fn().mockResolvedValue(undefined),
+      collectionExists: vi.fn().mockResolvedValue(true),
+    };
+  }),
+}));
+
+vi.mock('../../../infrastructure/ai/OllamaAiClient.js', () => ({
+  OllamaAiClient: vi.fn().mockImplementation(function () {
+    return {
+      chat: vi.fn(),
+      chatStream: vi.fn(),
+      embed: vi.fn().mockResolvedValue([0.1, 0.2, 0.3]),
+      isAvailable: vi.fn().mockResolvedValue(true),
+    };
+  }),
 }));
 
 const mockRepositoryRepo = {
@@ -113,7 +150,7 @@ describe('AnalysisPipelineService', () => {
     (mockRelationshipRepo as any).create = vi.fn().mockResolvedValue(undefined);
   });
 
-  it('completes all 6 stages successfully on happy path', async () => {
+  it('completes all 8 stages successfully on happy path', async () => {
     const pipeline = await createPipeline();
     const result = await pipeline.runFullAnalysis('repo-1');
 
@@ -123,6 +160,8 @@ describe('AnalysisPipelineService', () => {
     expect(result.stages.entities.status).toBe('completed');
     expect(result.stages.relationships.status).toBe('completed');
     expect(result.stages.graph.status).toBe('completed');
+    expect(result.stages.embedding.status).toBe('completed');
+    expect(result.stages.flow.status).toBe('completed');
     expect(result.stages.report.status).toBe('completed');
     expect(result.errors).toHaveLength(0);
     expect(result.success).toBe(true);

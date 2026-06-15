@@ -14,3 +14,5 @@ export { EntityDefinitionModel } from './EntityDefinition.js';
 export type { IEntityDefinition, EntityType } from './EntityDefinition.js';
 export { RelationshipModel } from './Relationship.js';
 export type { IRelationship } from './Relationship.js';
+export { FlowModel } from './Flow.js';
+export type { IFlow, IFlowStep } from './interfaces.js';

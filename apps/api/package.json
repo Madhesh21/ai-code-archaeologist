@@ -12,8 +12,10 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@archaeologist/ai-engine": "workspace:*",
     "@archaeologist/analysis-engine": "workspace:*",
     "@archaeologist/graph-engine": "workspace:*",
+    "@archaeologist/search-engine": "workspace:*",
     "@archaeologist/shared": "workspace:*",
     "adm-zip": "^0.5.17",
     "dotenv": "^16.4.7",

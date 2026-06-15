@@ -54,11 +54,11 @@ You must follow these principles:
 
 EPIC:
 
-EPIC-011: Entity Extraction - EPIC-014: Architecture Report 
+EPIC-015: Search Engine - EPIC-018: Chat System 
 
 Tasks:
 
-TASKS : 062 - 91
+TASKS : 092 - 114
 
 ---
 
