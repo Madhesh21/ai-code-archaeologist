@@ -1256,3 +1256,119 @@ Total tests passing: 248
 - EPIC-022: Additional Testing — TASKS 130-136
 - EPIC-023: Docker/Deployment — TASKS 137-142
 - EPIC-024: MVP End-to-End Validation — TASKS 143-150
+
+
+## EPIC-019: Graph Explorer
+
+Status: COMPLETED
+
+Interactive knowledge graph visualization using @xyflow/react. Subcomponents: GraphCanvas, GraphNode (colored by type), GraphSearch (debounced), NodeDetails panel. Fetches from /repositories/:id/graph API.
+
+Files created:
+- src/components/graph/GraphCanvas.tsx
+- src/components/graph/GraphNode.tsx
+- src/components/graph/GraphSearch.tsx
+- src/components/graph/NodeDetails.tsx
+
+Files modified:
+- src/pages/GraphExplorer.tsx — rewritten from placeholder to real implementation
+
+---
+
+## EPIC-020: Flow Explorer
+
+Status: COMPLETED
+
+Execution flow visualization with flow list panel + vertical React Flow diagram. Generate new flows via modal dialog. Fetches from /repositories/:id/flows API.
+
+Files created:
+- src/components/flow/FlowStepNode.tsx
+- src/components/flow/FlowCanvas.tsx
+- src/components/flow/FlowList.tsx
+- src/components/flow/GenerateFlowModal.tsx
+
+Files modified:
+- src/pages/FlowExplorer.tsx — rewritten from placeholder to real implementation
+
+---
+
+## EPIC-021: Archaeological Report UI
+
+Status: COMPLETED
+
+Dedicated report page at /repositories/:id/report. Sections: Executive Summary, Technology Stack (color-coded badges), API Inventory (table), Model Inventory (table), Dependency Overview. Regenerate button. Quick-link card on RepositoryOverview.
+
+Files created:
+- src/pages/Report.tsx
+- src/components/report/ReportSection.tsx
+- src/components/report/TechBadge.tsx
+
+---
+
+## EPIC-022: Testing
+
+Status: COMPLETED
+
+Test setup: Vitest + @testing-library/react + @testing-library/jest-dom + jsdom. vitest.config.ts with jsdom environment. Test scripts in package.json.
+
+Test files created (13 files, 31 tests):
+- src/api/__tests__/client.test.ts — 3 tests
+- src/hooks/__tests__/useGraph.test.tsx — 4 tests
+- src/hooks/__tests__/useFlow.test.tsx — 2 tests
+- src/hooks/__tests__/useReport.test.tsx — 1 test
+- src/components/graph/__tests__/GraphSearch.test.tsx — 2 tests
+- src/components/graph/__tests__/GraphNode.test.tsx — 1 test
+- src/components/flow/__tests__/FlowList.test.tsx — 3 tests
+- src/components/flow/__tests__/GenerateFlowModal.test.tsx — 3 tests
+- src/components/report/__tests__/ReportSection.test.tsx — 3 tests
+- src/components/layout/__tests__/Sidebar.test.tsx — 3 tests
+- src/pages/__tests__/GraphExplorer.test.tsx — 1 test
+- src/pages/__tests__/FlowExplorer.test.tsx — 2 tests
+- src/pages/__tests__/Report.test.tsx — 3 tests
+
+---
+
+## Shared Infrastructure
+
+Created during EPIC-019 implementation:
+- src/types/api.ts — All API response types (GraphNode, GraphSummary, FlowItem, FlowDetail, ReportData, etc.)
+- src/api/client.ts — Centralized fetchApi<T> wrapper
+- src/hooks/useGraph.ts — useGraphSummary, useNodeRelationships, useSearchNodes
+- src/hooks/useFlow.ts — useFlows, useFlow, useGenerateFlow
+- src/hooks/useReport.ts — useReport, useRegenerateReport
+- src/components/layout/Sidebar.tsx — Dynamic repository nav when viewing a repository
+
+---
+
+## Summary
+
+| EPIC | Title                   | Status    | Tests            |
+| ---- | ----------------------- | --------- | ---------------- |
+| 001  | Monorepo Initialization | COMPLETED | -                |
+| 002  | React Application       | COMPLETED | -                |
+| 003  | API Service             | COMPLETED | -                |
+| 004  | MongoDB                 | COMPLETED | -                |
+| 005  | Graph Database          | COMPLETED | -                |
+| 006  | Repository Upload       | COMPLETED | -                |
+| 007  | GitHub Import           | COMPLETED | -                |
+| 008  | Repository Scanner      | COMPLETED | -                |
+| 009  | Technology Detection    | COMPLETED | -                |
+| 010  | AST Analysis Engine     | COMPLETED | 198              |
+| 011  | Entity Extraction       | COMPLETED | (included above) |
+| 012  | Relationship Extraction | COMPLETED | (included above) |
+| 013  | Knowledge Graph         | COMPLETED | -                |
+| 014  | Architecture Report     | COMPLETED | -                |
+| 015  | Search Engine           | COMPLETED | 8                |
+| 016  | Flow Reconstruction     | COMPLETED | 5                |
+| 017  | AI Layer                | COMPLETED | 9                |
+| 018  | Chat System             | COMPLETED | 37               |
+| 019  | Graph Explorer          | COMPLETED | -                |
+| 020  | Flow Explorer           | COMPLETED | -                |
+| 021  | Report UI               | COMPLETED | -                |
+| 022  | Testing                 | COMPLETED | 31               |
+
+Total tests: 198 + 8 + 5 + 9 + 37 + 31 = 288 (plus analysis-engine internal)
+
+**Remaining EPICs:**
+- EPIC-023: Docker/Deployment (TASKS 137-142)
+- EPIC-024: MVP End-to-End Validation (TASKS 143-150)

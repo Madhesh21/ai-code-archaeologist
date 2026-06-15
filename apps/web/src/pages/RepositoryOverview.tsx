@@ -57,6 +57,7 @@ export default function RepositoryOverview() {
     { to: 'chat', label: 'Chat', description: 'Ask questions about this repository' },
     { to: 'graph', label: 'Graph', description: 'Explore the knowledge graph' },
     { to: 'flow', label: 'Flows', description: 'View execution flows' },
+    { to: 'report', label: 'Report', description: 'View archaeological report' },
   ];
 
   const displayTree = tree?.folders?.slice(0, 20) ?? [];

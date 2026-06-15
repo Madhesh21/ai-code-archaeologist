@@ -6,6 +6,7 @@ import RepositoryOverview from '@/pages/RepositoryOverview';
 import Chat from '@/pages/Chat';
 import GraphExplorer from '@/pages/GraphExplorer';
 import FlowExplorer from '@/pages/FlowExplorer';
+import Report from '@/pages/Report';
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
         <Route path="/repositories/:id/chat" element={<Chat />} />
         <Route path="/repositories/:id/graph" element={<GraphExplorer />} />
         <Route path="/repositories/:id/flow" element={<FlowExplorer />} />
+        <Route path="/repositories/:id/report" element={<Report />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
